@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { formatTimestamp, formatBytes } from "../js/util/format.js";
+import { formatTimestamp, formatBytes } from "../www/js/util/format.js";
 
 test("formatTimestamp pads to YYYY-MM-DD hh:mm:ss", () => {
   // Local-time construction so the assertion is timezone-independent.

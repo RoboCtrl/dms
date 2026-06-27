@@ -1,20 +1,14 @@
 # Deployment
 
-DMS is a static web app with no build step and no backend. Deployment is straightforward: copy your static files to any HTTPS-enabled hosting provider.
+DMS is a static web app with no build step and no backend. Deployment is straightforward: copy the `www/` folder to any HTTPS-enabled hosting provider.
 
 ## What to deploy
 
-Copy all project files **except**:
+Everything the app needs at runtime lives in the **`www/`** folder. To deploy,
+copy the **contents of `www/`** to your web root (or point your server's
+document root at `www/`). Nothing outside `www/` is needed in production.
 
-- `node_modules/` — Development dependency, not needed at runtime.
-- `test/` — Test code, not needed in production.
-- `claude-log/` — Internal development logs.
-- `.claude/` — Local development configuration.
-- `.superpowers/` — Superpowers task documentation.
-- `.git/` — Version control, not needed in production.
-- `.gitignore` — Git metadata.
-
-Deploy:
+`www/` contains:
 
 - `index.html`
 - `manifest.webmanifest`
@@ -24,19 +18,23 @@ Deploy:
 - `vendor/` — Vendored ZXing library.
 - `assets/` — App icons and other assets.
 
+Everything outside `www/` is development-only and must **not** be deployed:
+`test/`, `node_modules/`, `package.json`, `docs/`, `claude-log/`, `.git/`, and
+the various dotfolders.
+
 ## Deployment targets
 
 ### GitHub Pages
 
 1. Push your code to a GitHub repository.
-2. In the repository settings, enable GitHub Pages with the branch containing your static files (usually `main` or a `docs/` directory).
+2. In the repository settings, enable GitHub Pages. Because the runtime lives in `www/` (not the repo root or `docs/`), serve it via a GitHub Actions workflow that publishes the `www/` folder, or move/copy `www/`'s contents to a Pages-supported location.
 3. GitHub Pages serves over HTTPS by default.
 4. Access your app at `https://<username>.github.io/<repository>`.
 
 ### Netlify
 
 1. Connect your GitHub repository in Netlify.
-2. Set the publish directory to your project root (or a subdirectory if you've restructured).
+2. Set the publish directory to `www`.
 3. Netlify automatically deploys and serves over HTTPS.
 
 ### Vercel
@@ -48,7 +46,7 @@ Deploy:
 
 For other hosting (AWS S3 + CloudFront, Cloudflare Pages, self-hosted nginx/Apache, etc.):
 
-1. Copy the files listed above to your server.
+1. Copy the contents of `www/` to your server's document root.
 2. **Ensure HTTPS is enabled** (required for camera access).
 3. Serve `index.html` for all routes (single-page app).
 4. Set appropriate cache headers (e.g., immutable for versioned assets, short TTL for `index.html`).

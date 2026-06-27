@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createSettings } from "../js/settings.js";
+import { createSettings } from "../www/js/settings.js";
 
 /** Minimal in-memory Storage stub for tests. */
 function fakeStorage() {

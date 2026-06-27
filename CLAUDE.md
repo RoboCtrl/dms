@@ -27,8 +27,13 @@ light themes.
 
 ## Deployment
 
-The app ships as static files. Deployment is two steps: push source to GitHub,
-then update the copy on the VPS that nginx serves.
+The app ships as static files. The entire runtime lives in the **`www/`**
+folder — that folder alone is everything a web server needs to serve the app.
+Everything outside `www/` (tests, docs, tooling, `package.json`) is
+development-only and never deployed.
+
+Deployment is two steps: push source to GitHub, then update the copy on the VPS
+that nginx serves.
 
 > Credentials (VPS host/user/password, GitHub PAT) live in the git-ignored
 > `./.secret` file — never commit them or paste them into tracked files.
@@ -56,13 +61,18 @@ git push origin main
 - Server: `srv346879.hstgr.cloud` (Ubuntu 24.04), nginx + Let's Encrypt HTTPS.
 - Live URL: `https://srv346879.hstgr.cloud/app/`
 - Repo clone: `/opt/repos/dms`
-- Served via symlink: `/var/www/html/app` → `/opt/repos/dms` (folder symlink, so a
-  `git pull` updates the live site instantly — no copying).
+- Served via symlink: `/var/www/html/app` → `/opt/repos/dms/www` (folder symlink
+  to the runtime subfolder, so a `git pull` updates the live site instantly — no
+  copying). Pointing the symlink at `www/` means repo internals (`.git/`,
+  `CLAUDE.md`, `package.json`, …) are never reachable over the web.
 
 ```bash
 ssh root@srv346879.hstgr.cloud          # password in ./.secret
 cd /opt/repos/dms
 git pull origin main
+
+# one-time, after the move to www/: re-point the symlink at the runtime folder
+ln -sfn /opt/repos/dms/www /var/www/html/app
 ```
 
 Notes:
@@ -70,9 +80,9 @@ Notes:
 - The clone's `origin` is the token-free HTTPS URL, so `git pull` will ask for
   credentials. Authenticate with the GitHub PAT from `./.secret`, or set up a
   read-only **deploy key** on the server for frictionless pulls.
-- nginx blocks repo internals exposed by the folder symlink (`.git/`,
-  `CLAUDE.md`, `package.json`, …) via `/etc/nginx/snippets/deny-sensitive.conf`.
-  Keep web assets out of those denied patterns, or update that snippet.
+- Because the symlink targets `www/` (web assets only), repo internals are no
+  longer in the served tree. The `/etc/nginx/snippets/deny-sensitive.conf` rules
+  remain as defense-in-depth, but keep web assets out of those denied patterns.
 - No build step — committed files are served as-is. After a PWA update, bump the
   service worker cache version so clients refresh (`sw.js`).
 

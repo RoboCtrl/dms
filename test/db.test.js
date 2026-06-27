@@ -1,7 +1,7 @@
 import "fake-indexeddb/auto";
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import * as db from "../js/db.js";
+import * as db from "../www/js/db.js";
 
 beforeEach(async () => {
   await db.__resetForTests();

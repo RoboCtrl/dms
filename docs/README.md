@@ -22,16 +22,16 @@ DMS is a pure client-side mobile web app for scanning and tracking Data Matrix c
 
 | Module | Purpose |
 |--------|---------|
-| `js/db.js` | IndexedDB persistence layer; CRUD operations and size estimation. |
-| `js/store.js` | In-memory model of the scan history; per-content counts, undo buffer, and change events. |
-| `js/settings.js` | localStorage wrapper for user settings (theme, hide duplicates). |
-| `js/theme.js` | Apply dark/light theme by setting `data-theme` on the HTML root. |
-| `js/scanner.js` | Initialise the rear camera, decode Data Matrix frames, and emit recognised content. |
-| `js/ui/history-panel.js` | Render the scrollable history list with delete buttons and per-content counts. |
-| `js/ui/options-menu.js` | Options overlay with theme selector, hide-duplicates toggle, database stats, and clear confirmation. |
-| `js/ui/bottom-bar.js` | Render the undo footer (visible only when undo is available). |
-| `js/util/format.js` | Timestamp and byte-size formatting utilities (formatTimestamp, formatBytes). |
-| `js/app.js` | Application bootstrap; wire all modules together and manage the main render loop. |
+| `www/js/db.js` | IndexedDB persistence layer; CRUD operations and size estimation. |
+| `www/js/store.js` | In-memory model of the scan history; per-content counts, undo buffer, and change events. |
+| `www/js/settings.js` | localStorage wrapper for user settings (theme, hide duplicates). |
+| `www/js/theme.js` | Apply dark/light theme by setting `data-theme` on the HTML root. |
+| `www/js/scanner.js` | Initialise the rear camera, decode Data Matrix frames, and emit recognised content. |
+| `www/js/ui/history-panel.js` | Render the scrollable history list with delete buttons and per-content counts. |
+| `www/js/ui/options-menu.js` | Options overlay with theme selector, hide-duplicates toggle, database stats, and clear confirmation. |
+| `www/js/ui/bottom-bar.js` | Render the undo footer (visible only when undo is available). |
+| `www/js/util/format.js` | Timestamp and byte-size formatting utilities (formatTimestamp, formatBytes). |
+| `www/js/app.js` | Application bootstrap; wire all modules together and manage the main render loop. |
 
 ## Running locally
 
@@ -54,7 +54,7 @@ This runs all test suites: `format`, `db`, `store`, and `settings`. Tests use `n
 npm run serve
 ```
 
-This starts a Python HTTP server on port 8000. Open your browser to:
+This starts a Python HTTP server rooted at the `www/` folder on port 8000. Open your browser to:
 
 ```
 http://localhost:8000
@@ -62,14 +62,17 @@ http://localhost:8000
 
 **Note:** Camera access requires a secure context (HTTPS or localhost). The local server provides a secure context automatically.
 
-### Development files
+### Runtime files
 
-- `index.html` — Main HTML entry point.
-- `css/styles.css` — Styling (dark and light themes).
-- `manifest.webmanifest` — PWA manifest; enables installation and offline support.
-- `sw.js` — Service worker for offline caching and standalone mode.
-- `vendor/zxing/zxing.min.js` — Vendored ZXing library (Data Matrix decoding).
-- `assets/icons/` — PWA app icons (192×192 and 512×512).
+All files the deployed app needs live in the **`www/`** folder (copy this folder
+alone to deploy — see [docs/deployment.md](./deployment.md)):
+
+- `www/index.html` — Main HTML entry point.
+- `www/css/styles.css` — Styling (dark and light themes).
+- `www/manifest.webmanifest` — PWA manifest; enables installation and offline support.
+- `www/sw.js` — Service worker for offline caching and standalone mode.
+- `www/vendor/zxing/zxing.min.js` — Vendored ZXing library (Data Matrix decoding).
+- `www/assets/icons/` — PWA app icons (192×192 and 512×512).
 
 ## On-device testing checklist
 
