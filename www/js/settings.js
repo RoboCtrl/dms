@@ -1,5 +1,5 @@
 /**
- * Persistent user settings (theme, hide-duplicates) backed by a Storage-like
+ * Persistent user settings (theme, hide-duplicates, camera-on) backed by a Storage-like
  * object. Defaults to localStorage but accepts an injected storage for tests.
  */
 

@@ -26,20 +26,12 @@ test("persists theme and hideDuplicates across instances", () => {
 });
 
 test("cameraOn defaults to true", () => {
-  const store = new Map();
-  const s = createSettings({
-    getItem: (k) => store.get(k) ?? null,
-    setItem: (k, v) => store.set(k, v),
-  });
+  const s = createSettings(fakeStorage());
   assert.equal(s.get().cameraOn, true);
 });
 
 test("setCameraOn persists the value", () => {
-  const store = new Map();
-  const s = createSettings({
-    getItem: (k) => store.get(k) ?? null,
-    setItem: (k, v) => store.set(k, v),
-  });
+  const s = createSettings(fakeStorage());
   s.setCameraOn(false);
   assert.equal(s.get().cameraOn, false);
 });
