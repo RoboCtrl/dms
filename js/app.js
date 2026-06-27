@@ -45,6 +45,12 @@ async function main() {
     onRecognized: (content) => store.recordScan(content),
   });
   await scanner.start();
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {
+      // Offline support is optional; ignore registration failures.
+    });
+  }
 }
 
 main();
