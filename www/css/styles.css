@@ -11,6 +11,7 @@
   --accent: #4caf50;
   --error: #ff6b6b;
   --overlay-dim: #00000088;
+  --link: #7FC1DF;
 }
 
 [data-theme="light"] {
@@ -24,6 +25,7 @@
   --accent: #2e7d32;
   --error: #c62828;
   --overlay-dim: #cccccc80;
+  --link: #496E80;
 }
 
 * {
@@ -67,6 +69,10 @@ body {
   object-fit: cover;
 }
 
+#freeze {
+  opacity: 0.5;
+}
+
 #scan-content {
   position: absolute;
   left: 0;
@@ -90,17 +96,64 @@ body {
   color: var(--error);
 }
 
-#menu-btn {
+/* Camera off: dark fill with a centered white icon. */
+#camera-off {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #333333;
+  color: #ffffff;
+  font-size: 64px;
+}
+
+/* Placement reticle: four accent corner brackets in the center. */
+#reticle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#reticle i {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--accent);
+}
+
+#reticle i:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; }
+#reticle i:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; }
+#reticle i:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; }
+#reticle i:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+.cam-ctrl {
   position: absolute;
   top: 8px;
-  right: 8px;
-  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
   line-height: 1;
   background: #000000aa;
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 0;
+}
+
+#menu-btn {
+  right: 8px;
+}
+
+#camera-btn {
+  right: 56px;
 }
 
 /* --- History --- */
@@ -113,7 +166,7 @@ body {
 .entry {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-rows: auto auto;
+  grid-template-rows: 1.6fr 1fr;
   gap: 2px 10px;
   align-items: center;
   padding: 8px 10px;
@@ -130,13 +183,18 @@ body {
   min-width: 2.2em;
   text-align: center;
   font-weight: bold;
+  font-size: 1.4em;
   color: var(--counter-fg);
 }
 
 .entry .content {
-  font-weight: bold;
+  font-weight: normal;
   color: var(--content-fg);
   word-break: break-all;
+}
+
+.entry .content strong {
+  font-weight: bold;
 }
 
 .entry .timestamp {
@@ -190,6 +248,16 @@ body {
   color: var(--content-fg);
   border-radius: 10px;
   padding: 16px;
+}
+
+.options-panel h2 {
+  margin-top: 0;
+}
+
+.options-panel a:link,
+.options-panel a:visited,
+.options-panel a:active {
+  color: var(--link);
 }
 
 #options-close {
