@@ -34,3 +34,23 @@ export function formatBytes(bytes) {
   if (bytes === 0) return "0 kB";
   return `${(bytes / KB).toFixed(1)} kB`;
 }
+
+/**
+ * Split scanned content into display segments. When the content matches the
+ * special format "<integer> <alphanumeric> <integer> <integer>", the four
+ * tokens are returned with only the second (alphanumeric) token marked bold;
+ * any other content is returned as a single non-bold segment.
+ * @param {string} content - The scanned content.
+ * @returns {Array<{text:string, bold:boolean}>} Ordered display segments.
+ */
+export function segmentContent(content) {
+  const special = /^(\d+)\s+([A-Za-z0-9]+)\s+([0-9]+)\s+([0-9]+)$/;
+  const m = content.match(special);
+  if (!m) return [{ text: content, bold: false }];
+  return [
+    { text: m[1], bold: false },
+    { text: m[2], bold: true },
+    { text: m[3], bold: false },
+    { text: m[4], bold: false },
+  ];
+}
