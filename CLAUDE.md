@@ -25,6 +25,57 @@ light themes.
 - Per-prompt change logs live in `./claude-log` (git-ignored).
 - Active developer branch: `dev-claude`.
 
+## Deployment
+
+The app ships as static files. Deployment is two steps: push source to GitHub,
+then update the copy on the VPS that nginx serves.
+
+> Credentials (VPS host/user/password, GitHub PAT) live in the git-ignored
+> `./.secret` file — never commit them or paste them into tracked files.
+
+### 1. Push to GitHub (origin)
+
+- Origin: `git@github.com:RoboCtrl/dms.git` (private).
+- Develop on `dev-claude`; the VPS serves `main`, so changes must reach `main`
+  to go live.
+
+```bash
+# on the dev machine
+git checkout dev-claude
+git add -A && git commit -m "…"        # per-prompt commit (see global rules)
+git push origin dev-claude
+
+# promote to main (direct merge shown; a PR is fine too)
+git checkout main
+git merge --ff-only dev-claude
+git push origin main
+```
+
+### 2. Deploy to the VPS
+
+- Server: `srv346879.hstgr.cloud` (Ubuntu 24.04), nginx + Let's Encrypt HTTPS.
+- Live URL: `https://srv346879.hstgr.cloud/app/`
+- Repo clone: `/opt/repos/dms`
+- Served via symlink: `/var/www/html/app` → `/opt/repos/dms` (folder symlink, so a
+  `git pull` updates the live site instantly — no copying).
+
+```bash
+ssh root@srv346879.hstgr.cloud          # password in ./.secret
+cd /opt/repos/dms
+git pull origin main
+```
+
+Notes:
+
+- The clone's `origin` is the token-free HTTPS URL, so `git pull` will ask for
+  credentials. Authenticate with the GitHub PAT from `./.secret`, or set up a
+  read-only **deploy key** on the server for frictionless pulls.
+- nginx blocks repo internals exposed by the folder symlink (`.git/`,
+  `CLAUDE.md`, `package.json`, …) via `/etc/nginx/snippets/deny-sensitive.conf`.
+  Keep web assets out of those denied patterns, or update that snippet.
+- No build step — committed files are served as-is. After a PWA update, bump the
+  service worker cache version so clients refresh (`sw.js`).
+
 ## Status
 
 Pre-implementation. Spec and plan being drafted.
