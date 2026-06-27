@@ -1,4 +1,5 @@
-import { formatTimestamp } from "../util/format.js";
+import { formatTimestamp, segmentContent } from "../util/format.js";
+import { setIcon } from "../util/icon.js";
 
 const LONG_PRESS_MS = 500;
 
@@ -28,7 +29,18 @@ export function createHistoryPanel({ root, store, getHideDuplicates }) {
 
     const content = document.createElement("span");
     content.className = "content";
-    content.textContent = rec.content;
+    // Render segments: only the special-format alphanumeric token is bold.
+    const segments = segmentContent(rec.content);
+    segments.forEach((seg, i) => {
+      if (i > 0) content.appendChild(document.createTextNode(" "));
+      if (seg.bold) {
+        const strong = document.createElement("strong");
+        strong.textContent = seg.text;
+        content.appendChild(strong);
+      } else {
+        content.appendChild(document.createTextNode(seg.text));
+      }
+    });
 
     const ts = document.createElement("span");
     ts.className = "timestamp";
@@ -37,7 +49,7 @@ export function createHistoryPanel({ root, store, getHideDuplicates }) {
     const trash = document.createElement("button");
     trash.className = "trash";
     trash.setAttribute("aria-label", "Delete entry");
-    trash.textContent = "🗑"; // wastebasket
+    setIcon(trash, "trash-2");
     trash.addEventListener("click", (e) => {
       e.stopPropagation();
       store.deleteEntry(rec.id);
