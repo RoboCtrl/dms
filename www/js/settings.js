@@ -1,10 +1,10 @@
 /**
- * Persistent user settings (theme, hide-duplicates) backed by a Storage-like
+ * Persistent user settings (theme, hide-duplicates, camera-on) backed by a Storage-like
  * object. Defaults to localStorage but accepts an injected storage for tests.
  */
 
 const KEY = "dms.settings";
-const DEFAULTS = { theme: "dark", hideDuplicates: false };
+const DEFAULTS = { theme: "dark", hideDuplicates: false, cameraOn: true };
 
 /**
  * Create a settings accessor bound to a storage backend.
@@ -15,7 +15,7 @@ export function createSettings(storage = localStorage) {
   /**
    * Read settings, merging stored values over defaults. Malformed JSON falls
    * back to defaults.
-   * @returns {{theme:"dark"|"light", hideDuplicates:boolean}}
+   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean}}
    */
   function get() {
     try {
@@ -29,7 +29,7 @@ export function createSettings(storage = localStorage) {
 
   /**
    * Persist a partial update merged over current settings.
-   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean}>} patch
+   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean}>} patch
    */
   function update(patch) {
     storage.setItem(KEY, JSON.stringify({ ...get(), ...patch }));
@@ -50,6 +50,13 @@ export function createSettings(storage = localStorage) {
      */
     setHideDuplicates(value) {
       update({ hideDuplicates: value });
+    },
+    /**
+     * Set and persist whether the camera is on.
+     * @param {boolean} value
+     */
+    setCameraOn(value) {
+      update({ cameraOn: value });
     },
   };
 }

@@ -1,5 +1,6 @@
 import { applyTheme } from "../theme.js";
 import { formatBytes } from "../util/format.js";
+import { setIcon } from "../util/icon.js";
 import * as db from "../db.js";
 
 /**
@@ -20,6 +21,9 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const hideDup = document.getElementById("opt-hide-dup");
   const stats = document.getElementById("db-stats");
   const clearBtn = document.getElementById("clear-db-btn");
+
+  setIcon(menuBtn, "menu");
+  setIcon(closeBtn, "x");
 
   /** Refresh the database entry-count and size readout. */
   async function refreshStats() {
