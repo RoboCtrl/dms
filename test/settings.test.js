@@ -13,7 +13,7 @@ function fakeStorage() {
 
 test("defaults to dark theme and duplicates shown", () => {
   const s = createSettings(fakeStorage());
-  assert.deepEqual(s.get(), { theme: "dark", hideDuplicates: false });
+  assert.deepEqual(s.get(), { theme: "dark", hideDuplicates: false, cameraOn: true });
 });
 
 test("persists theme and hideDuplicates across instances", () => {
@@ -22,5 +22,24 @@ test("persists theme and hideDuplicates across instances", () => {
   s1.setTheme("light");
   s1.setHideDuplicates(true);
   const s2 = createSettings(storage);
-  assert.deepEqual(s2.get(), { theme: "light", hideDuplicates: true });
+  assert.deepEqual(s2.get(), { theme: "light", hideDuplicates: true, cameraOn: true });
+});
+
+test("cameraOn defaults to true", () => {
+  const store = new Map();
+  const s = createSettings({
+    getItem: (k) => store.get(k) ?? null,
+    setItem: (k, v) => store.set(k, v),
+  });
+  assert.equal(s.get().cameraOn, true);
+});
+
+test("setCameraOn persists the value", () => {
+  const store = new Map();
+  const s = createSettings({
+    getItem: (k) => store.get(k) ?? null,
+    setItem: (k, v) => store.set(k, v),
+  });
+  s.setCameraOn(false);
+  assert.equal(s.get().cameraOn, false);
 });
