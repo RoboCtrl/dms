@@ -30,6 +30,7 @@ DMS is a pure client-side mobile web app for scanning and tracking Data Matrix c
 | `js/ui/history-panel.js` | Render the scrollable history list with delete buttons and per-content counts. |
 | `js/ui/options-menu.js` | Options overlay with theme selector, hide-duplicates toggle, database stats, and clear confirmation. |
 | `js/ui/bottom-bar.js` | Render the undo footer (visible only when undo is available). |
+| `js/util/format.js` | Timestamp and byte-size formatting utilities (formatTimestamp, formatBytes). |
 | `js/app.js` | Application bootstrap; wire all modules together and manage the main render loop. |
 
 ## Running locally
