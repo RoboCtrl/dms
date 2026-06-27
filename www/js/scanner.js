@@ -39,6 +39,7 @@ export function createScanner({ onRecognized, settings }) {
   const gate = createScanGate(2000);
 
   let frozen = false;
+  let transitioning = false;
   let cameraOn = settings.get().cameraOn;
 
   /**
@@ -90,7 +91,12 @@ export function createScanner({ onRecognized, settings }) {
     content.hidden = true;
   }
 
-  /** Start the continuous decode loop on the rear camera. */
+  /**
+   * Start the continuous decode loop on the rear (environment-facing) camera.
+   * Runs until the reader is reset externally (e.g. camera toggled off). Camera
+   * and permission errors are caught internally and surfaced via the on-screen
+   * error box; this function never throws.
+   */
   async function startDecode() {
     try {
       await reader.decodeFromConstraints(
@@ -114,6 +120,7 @@ export function createScanner({ onRecognized, settings }) {
           (err?.name || err) +
           ")",
       );
+      reticle.hidden = true;
     }
   }
 
@@ -124,18 +131,24 @@ export function createScanner({ onRecognized, settings }) {
    * @param {boolean} on - Desired camera state.
    */
   async function setCamera(on) {
-    cameraOn = on;
-    settings.setCameraOn(on);
-    setIcon(camBtn, on ? "camera" : "camera-off");
-    if (on) {
-      camOff.hidden = true;
-      reticle.hidden = false;
-      await startDecode();
-    } else {
-      reader.reset();
-      resume();
-      reticle.hidden = true;
-      camOff.hidden = false;
+    if (transitioning) return;
+    transitioning = true;
+    try {
+      cameraOn = on;
+      settings.setCameraOn(on);
+      setIcon(camBtn, on ? "camera" : "camera-off");
+      if (on) {
+        camOff.hidden = true;
+        reticle.hidden = false;
+        await startDecode();
+      } else {
+        reader.reset();
+        resume();
+        reticle.hidden = true;
+        camOff.hidden = false;
+      }
+    } finally {
+      transitioning = false;
     }
   }
 
