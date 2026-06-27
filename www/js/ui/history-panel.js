@@ -23,9 +23,18 @@ export function createHistoryPanel({ root, store, getHideDuplicates }) {
     el.className = "entry" + (store.isHighlighted(rec.id) ? " highlighted" : "");
     el.dataset.id = String(rec.id);
 
+    // Left column: the per-content counter, right-aligned and sized for two digits.
+    const left = document.createElement("span");
+    left.className = "col-left";
+
     const counter = document.createElement("span");
     counter.className = "counter";
     counter.textContent = String(store.countFor(rec.content));
+    left.appendChild(counter);
+
+    // Center column: scanned content (upper) stacked over the timestamp (lower).
+    const center = document.createElement("div");
+    center.className = "col-center";
 
     const content = document.createElement("span");
     content.className = "content";
@@ -46,6 +55,12 @@ export function createHistoryPanel({ root, store, getHideDuplicates }) {
     ts.className = "timestamp";
     ts.textContent = formatTimestamp(rec.timestamp);
 
+    center.append(content, ts);
+
+    // Right column: the delete (trash) control, centered within its column.
+    const right = document.createElement("span");
+    right.className = "col-right";
+
     const trash = document.createElement("button");
     trash.className = "trash";
     trash.setAttribute("aria-label", "Delete entry");
@@ -54,10 +69,11 @@ export function createHistoryPanel({ root, store, getHideDuplicates }) {
       e.stopPropagation();
       store.deleteEntry(rec.id);
     });
+    right.appendChild(trash);
 
     attachLongPress(el, () => store.toggleHighlight(rec.id));
 
-    el.append(counter, content, ts, trash);
+    el.append(left, center, right);
     return el;
   }
 
