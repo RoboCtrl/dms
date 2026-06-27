@@ -1,0 +1,220 @@
+/* Theme variables. Dark is the default; [data-theme="light"] overrides. */
+:root,
+[data-theme="dark"] {
+  --bg: #121212;
+  --panel: #1e1e1e;
+  --row: #242424;
+  --row-highlight: #3a3a00;
+  --counter-fg: #ffffff;
+  --content-fg: #cccccc;
+  --timestamp-fg: #888888;
+  --accent: #4caf50;
+  --error: #ff6b6b;
+  --overlay-dim: #00000088;
+}
+
+[data-theme="light"] {
+  --bg: #fafafa;
+  --panel: #ffffff;
+  --row: #f0f0f0;
+  --row-highlight: #fff7b0;
+  --counter-fg: #000000;
+  --content-fg: #333333;
+  --timestamp-fg: #777777;
+  --accent: #2e7d32;
+  --error: #c62828;
+  --overlay-dim: #cccccc80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--content-fg);
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* --- Camera panel --- */
+#camera-panel {
+  position: relative;
+  flex: 0 0 45%;
+  background: #000;
+  overflow: hidden;
+}
+
+#video,
+#freeze,
+#overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#scan-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 12px;
+  background: #000000aa;
+  color: #fff;
+  font-weight: bold;
+  word-break: break-all;
+}
+
+#camera-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  color: var(--error);
+}
+
+#menu-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 24px;
+  line-height: 1;
+  background: #000000aa;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+/* --- History --- */
+#history {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: var(--panel);
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 2px 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid #00000022;
+  background: var(--row);
+}
+
+.entry.highlighted {
+  background: var(--row-highlight);
+}
+
+.entry .counter {
+  grid-row: 1 / 3;
+  min-width: 2.2em;
+  text-align: center;
+  font-weight: bold;
+  color: var(--counter-fg);
+}
+
+.entry .content {
+  font-weight: bold;
+  color: var(--content-fg);
+  word-break: break-all;
+}
+
+.entry .timestamp {
+  grid-column: 2;
+  font-size: 0.75em;
+  color: var(--timestamp-fg);
+}
+
+.entry .trash {
+  grid-row: 1 / 3;
+  background: none;
+  border: none;
+  color: var(--content-fg);
+  font-size: 20px;
+  height: 100%;
+  padding: 0 8px;
+}
+
+/* --- Bottom bar --- */
+#bottom-bar {
+  flex: 0 0 auto;
+}
+
+#bottom-bar button {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-weight: bold;
+}
+
+/* --- Options overlay --- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.options-panel {
+  position: relative;
+  width: 88%;
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--panel);
+  color: var(--content-fg);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+#options-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: var(--content-fg);
+}
+
+.opt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.opt-group {
+  border-top: 1px solid #80808044;
+  margin-top: 12px;
+  padding-top: 8px;
+}
+
+[hidden] {
+  display: none !important;
+}
