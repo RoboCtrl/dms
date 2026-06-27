@@ -43,6 +43,7 @@ async function main() {
 
   const scanner = createScanner({
     onRecognized: (content) => store.recordScan(content),
+    settings,
   });
   await scanner.start();
 
