@@ -14,7 +14,7 @@ DMS is a pure client-side mobile web app for scanning and tracking Data Matrix c
 
 ## Target platforms
 
-- **Chrome** and **Firefox** on mobile (iOS and Android).
+- **Chrome** and **Firefox** on mobile Android. (On iOS, PWA installation and offline features require Safari; third-party iOS browsers are WebKit-wrapped and do not support service-worker offline caching.)
 - **Portrait orientation** (landscape not supported).
 - Secure context required (HTTPS or localhost) for camera access.
 

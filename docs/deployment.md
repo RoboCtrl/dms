@@ -71,6 +71,14 @@ The app includes a service worker (`sw.js`) that caches all static assets on fir
 
 No additional configuration is needed for offline support to work.
 
+### Updating the app after deployment
+
+The service worker uses a **cache-first strategy** keyed on a fixed cache name in `sw.js` (default: `"dms-v1"`). Once users have cached the app, deploying new code will **not** reach them automatically. To force an update:
+
+1. In `sw.js`, increment the `CACHE` constant (e.g., `"dms-v1"` → `"dms-v2"`).
+2. When users next open the app, the service worker activate event will clear the old cache and fetch the new app shell.
+3. Existing scan history in IndexedDB and settings in localStorage will persist across the update.
+
 ## Configuration
 
 The app has no configuration files or environment variables. All settings (theme, hide duplicates) are user-configurable in the app UI and stored in the browser's localStorage.
