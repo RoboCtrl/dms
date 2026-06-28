@@ -133,6 +133,23 @@ body {
 #reticle i:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; }
 #reticle i:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; }
 
+/* Tap-to-continue hint shown while frozen in tap mode. */
+#tap-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 44px;
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  pointer-events: none;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
 .cam-ctrl {
   position: absolute;
   top: 8px;

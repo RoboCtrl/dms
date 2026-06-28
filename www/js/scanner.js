@@ -5,12 +5,18 @@
  * frozen frame at 50% opacity with a highlight polygon, shows a placement
  * reticle while scanning, and throttles duplicate recordings via a cooldown
  * gate. Emits recognised content via the onRecognized callback.
+ *
+ * Freeze lifecycle (when to freeze, when to unfreeze, tap-to-continue hint)
+ * is delegated to freeze-controller.js; the resume trigger depends on the
+ * selected freeze mode (auto, tap, or timer).
  */
 
 /* global ZXing */
 
 import { setIcon } from "./util/icon.js";
 import { createScanGate } from "./util/scan-gate.js";
+import { createFreezeController } from "./util/freeze-controller.js";
+import { freezeConfigFromSettings } from "./freeze.js";
 
 /**
  * Create the scanner controller.
@@ -30,6 +36,7 @@ export function createScanner({ onRecognized, settings }) {
   const camOff = document.getElementById("camera-off");
   const camOffIcon = camOff.querySelector(".cam-off-icon");
   const reticle = document.getElementById("reticle");
+  const tapHint = document.getElementById("tap-hint");
 
   const hints = new Map();
   hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
@@ -37,6 +44,7 @@ export function createScanner({ onRecognized, settings }) {
   ]);
   const reader = new ZXing.BrowserMultiFormatReader(hints);
   const gate = createScanGate(2000);
+  const freezeCtl = createFreezeController(freezeConfigFromSettings(settings.get()));
 
   let frozen = false;
   let transitioning = false;
@@ -89,6 +97,7 @@ export function createScanner({ onRecognized, settings }) {
     freeze.hidden = true;
     overlay.hidden = true;
     content.hidden = true;
+    tapHint.hidden = true;
   }
 
   /**
@@ -103,15 +112,20 @@ export function createScanner({ onRecognized, settings }) {
         { video: { facingMode: "environment" } },
         video,
         (result) => {
-          if (!result || frozen) return;
-          const text = result.getText();
-          // Throttle duplicate recordings; skip entirely if within cooldown.
-          if (!gate.accept(text, Date.now())) return;
-          frozen = true;
-          drawFreeze(result.getResultPoints());
-          content.textContent = text;
-          content.hidden = false;
-          onRecognized(text);
+          const now = Date.now();
+          const text = result ? result.getText() : null;
+          const action = freezeCtl.onResult(text, now);
+          if (action === "freeze") {
+            frozen = true;
+            drawFreeze(result.getResultPoints());
+            content.textContent = text;
+            content.hidden = false;
+            tapHint.hidden = settings.get().freezeMode !== "tap";
+            // Throttle duplicate records (e.g. brief flicker re-freeze).
+            if (gate.accept(text, now)) onRecognized(text);
+          } else if (action === "unfreeze") {
+            resume();
+          }
         },
       );
     } catch (err) {
@@ -155,7 +169,7 @@ export function createScanner({ onRecognized, settings }) {
   panel.addEventListener("click", (e) => {
     // Ignore clicks on the control buttons themselves.
     if (e.target.closest(".cam-ctrl")) return;
-    if (frozen) resume();
+    if (freezeCtl.onTap(Date.now()) === "unfreeze") resume();
   });
 
   camBtn.addEventListener("click", () => setCamera(!cameraOn));
@@ -165,6 +179,10 @@ export function createScanner({ onRecognized, settings }) {
     async start() {
       setIcon(camOffIcon, "camera-off");
       await setCamera(cameraOn);
+    },
+    /** Re-read freeze settings and apply them to the live controller. */
+    refreshFreezeConfig() {
+      freezeCtl.setConfig(freezeConfigFromSettings(settings.get()));
     },
   };
 }

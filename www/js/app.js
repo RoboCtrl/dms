@@ -22,6 +22,11 @@ async function main() {
   const store = createStore(db);
   await store.load();
 
+  const scanner = createScanner({
+    onRecognized: (content) => store.recordScan(content),
+    settings,
+  });
+
   const history = createHistoryPanel({
     root: document.getElementById("history"),
     store,
@@ -31,7 +36,10 @@ async function main() {
   createOptionsMenu({
     store,
     settings,
-    onSettingsChange: () => render(),
+    onSettingsChange: () => {
+      render();
+      scanner.refreshFreezeConfig();
+    },
   });
 
   /** Re-render all store-driven UI. */
@@ -43,10 +51,6 @@ async function main() {
   store.on("change", render);
   render();
 
-  const scanner = createScanner({
-    onRecognized: (content) => store.recordScan(content),
-    settings,
-  });
   await scanner.start();
 
   if ("serviceWorker" in navigator) {
