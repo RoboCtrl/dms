@@ -83,3 +83,13 @@ test("setConfig switches behaviour", () => {
   assert.equal(c.onResult(null, 100), "none"); // tap: never auto-unfreezes
   assert.equal(c.onTap(100), "unfreeze");
 });
+
+test("reset() clears freeze state and cooldown so the next result can freeze again", () => {
+  const c = createFreezeController({ ...base, mode: "tap", tapDelaySec: 0.5 });
+  c.onResult("A", 0); // freeze
+  assert.equal(c.isFrozen(), true);
+  c.reset();
+  assert.equal(c.isFrozen(), false);
+  // Cooldown must be zeroed too, so a fresh result at t=100 (well within 500ms) should freeze
+  assert.equal(c.onResult("A", 100), "freeze");
+});

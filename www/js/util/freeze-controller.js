@@ -14,7 +14,7 @@
  *             autoDelaySec.
  *
  * @param {{mode:string, timerSec:number, tapDelaySec:number, autoDelaySec:number}} config
- * @returns {{onResult:(content:string|null, now:number)=>("freeze"|"unfreeze"|"none"), onTap:(now:number)=>("unfreeze"|"none"), setConfig:(config:object)=>void, isFrozen:()=>boolean}}
+ * @returns {{onResult:(content:string|null, now:number)=>("freeze"|"unfreeze"|"none"), onTap:(now:number)=>("unfreeze"|"none"), setConfig:(config:object)=>void, isFrozen:()=>boolean, reset:()=>void}}
  */
 export function createFreezeController(config) {
   let { mode, timerSec, tapDelaySec, autoDelaySec } = config;
@@ -25,7 +25,10 @@ export function createFreezeController(config) {
   let lastSeenSame = 0;
   let cooldownUntil = 0;
 
-  /** Clear freeze state. */
+  /**
+   * Clear the active freeze: resets `frozen` to false and `frozenContent` to
+   * null. Does not touch cooldownUntil; call reset() for a full lifecycle reset.
+   */
   function clear() {
     frozen = false;
     frozenContent = null;
@@ -84,6 +87,7 @@ export function createFreezeController(config) {
     /**
      * Replace the live configuration (e.g. when options change).
      * @param {{mode:string, timerSec:number, tapDelaySec:number, autoDelaySec:number}} next
+     * @returns {void}
      */
     setConfig(next) {
       mode = next.mode;
@@ -95,6 +99,18 @@ export function createFreezeController(config) {
     /** @returns {boolean} Whether the scanner is currently frozen. */
     isFrozen() {
       return frozen;
+    },
+
+    /**
+     * Fully reset freeze lifecycle state — clears the active freeze (via
+     * clear()) and also zeroes the post-tap cooldown. Call this whenever the
+     * camera is toggled off so the controller stays in sync with the scanner's
+     * local frozen flag, which is also cleared on camera-off.
+     * @returns {void}
+     */
+    reset() {
+      clear();
+      cooldownUntil = 0;
     },
   };
 }

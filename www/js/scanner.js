@@ -23,7 +23,7 @@ import { freezeConfigFromSettings } from "./freeze.js";
  * @param {object} opts
  * @param {(content: string) => void} opts.onRecognized - Called when a code is recognised and recorded.
  * @param {object} opts.settings - Settings instance for reading/persisting cameraOn.
- * @returns {{start: () => Promise<void>}}
+ * @returns {{start: () => Promise<void>, refreshFreezeConfig: () => void}}
  */
 export function createScanner({ onRecognized, settings }) {
   const panel = document.getElementById("camera-panel");
@@ -158,6 +158,7 @@ export function createScanner({ onRecognized, settings }) {
       } else {
         reader.reset();
         resume();
+        freezeCtl.reset();
         reticle.hidden = true;
         camOff.hidden = false;
       }
@@ -180,9 +181,16 @@ export function createScanner({ onRecognized, settings }) {
       setIcon(camOffIcon, "camera-off");
       await setCamera(cameraOn);
     },
-    /** Re-read freeze settings and apply them to the live controller. */
+    /**
+     * Re-read freeze settings and apply them to the live controller. Also
+     * re-evaluates the tap hint visibility: if the mode switches away from tap
+     * while frozen, the hint is hidden immediately rather than waiting for the
+     * next resume.
+     * @returns {void}
+     */
     refreshFreezeConfig() {
       freezeCtl.setConfig(freezeConfigFromSettings(settings.get()));
+      tapHint.hidden = settings.get().freezeMode !== "tap" || !frozen;
     },
   };
 }
