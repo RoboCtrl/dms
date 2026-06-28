@@ -55,17 +55,46 @@
           <input id="opt-hide-dup" type="checkbox" />
         </label>
 
-        <label class="opt-row">
-          <span>Camera viewport height</span>
-          <input
-            id="opt-cam-height"
-            type="range"
-            min="0"
-            max="4"
-            step="1"
-            aria-label="Camera viewport height"
-          />
-        </label>
+        <section class="opt-group">
+          <h3>Scanner</h3>
+
+          <label class="opt-row">
+            <span>Camera viewport height</span>
+            <input
+              id="opt-cam-height"
+              type="range"
+              min="0"
+              max="4"
+              step="1"
+              aria-label="Camera viewport height"
+            />
+          </label>
+
+          <fieldset class="opt-freeze">
+            <legend>Scanner freeze</legend>
+
+            <label class="opt-freeze-row">
+              <input type="radio" name="freeze-mode" value="timer" id="freeze-mode-timer" />
+              <span>Continue after:</span>
+              <input id="opt-freeze-timer" type="range" min="0" max="3" step="1"
+                aria-label="Continue after duration" />
+            </label>
+
+            <label class="opt-freeze-row">
+              <input type="radio" name="freeze-mode" value="tap" id="freeze-mode-tap" />
+              <span>Tap to continue, delayed by</span>
+              <input id="opt-freeze-tap" type="range" min="0" max="3" step="1"
+                aria-label="Tap-to-continue delay" />
+            </label>
+
+            <label class="opt-freeze-row">
+              <input type="radio" name="freeze-mode" value="auto" id="freeze-mode-auto" />
+              <span>Automatic unfreeze, delayed by:</span>
+              <input id="opt-freeze-auto" type="range" min="0" max="3" step="1"
+                aria-label="Automatic unfreeze delay" />
+            </label>
+          </fieldset>
+        </section>
 
         <section class="opt-group">
           <h3>Database</h3>

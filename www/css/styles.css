@@ -321,6 +321,30 @@ body {
   padding-top: 8px;
 }
 
+.opt-freeze {
+  border: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.opt-freeze legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.opt-freeze-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.opt-freeze-row input[type="range"] {
+  width: 96px;
+}
+
 [hidden] {
   display: none !important;
 }
