@@ -56,7 +56,7 @@ body {
 /* --- Camera panel --- */
 #camera-panel {
   position: relative;
-  flex: 0 0 45%;
+  flex: 0 0 var(--cam-height, 45%);
   background: #000;
   overflow: hidden;
 }

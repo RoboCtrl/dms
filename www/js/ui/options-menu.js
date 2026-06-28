@@ -1,4 +1,5 @@
 import { applyTheme } from "../theme.js";
+import { applyCameraHeight } from "../viewport.js";
 import { formatBytes } from "../util/format.js";
 import { setIcon } from "../util/icon.js";
 import * as db from "../db.js";
@@ -19,6 +20,7 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const menuBtn = document.getElementById("menu-btn");
   const themeSel = document.getElementById("opt-theme");
   const hideDup = document.getElementById("opt-hide-dup");
+  const camHeight = document.getElementById("opt-cam-height");
   const stats = document.getElementById("db-stats");
   const clearBtn = document.getElementById("clear-db-btn");
 
@@ -36,6 +38,7 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
     const s = settings.get();
     themeSel.value = s.theme;
     hideDup.checked = s.hideDuplicates;
+    camHeight.value = String(s.cameraHeight);
     refreshStats();
     overlay.hidden = false;
   }
@@ -59,6 +62,13 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
 
   hideDup.addEventListener("change", () => {
     settings.setHideDuplicates(hideDup.checked);
+    onSettingsChange();
+  });
+
+  camHeight.addEventListener("input", () => {
+    const index = Number(camHeight.value);
+    settings.setCameraHeight(index);
+    applyCameraHeight(index);
     onSettingsChange();
   });
 

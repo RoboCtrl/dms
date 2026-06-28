@@ -4,7 +4,7 @@
  */
 
 const KEY = "dms.settings";
-const DEFAULTS = { theme: "dark", hideDuplicates: false, cameraOn: true };
+const DEFAULTS = { theme: "dark", hideDuplicates: false, cameraOn: true, cameraHeight: 3 };
 
 /**
  * Create a settings accessor bound to a storage backend.
@@ -15,7 +15,7 @@ export function createSettings(storage = localStorage) {
   /**
    * Read settings, merging stored values over defaults. Malformed JSON falls
    * back to defaults.
-   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean}}
+   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number}}
    */
   function get() {
     try {
@@ -29,7 +29,7 @@ export function createSettings(storage = localStorage) {
 
   /**
    * Persist a partial update merged over current settings.
-   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean}>} patch
+   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number}>} patch
    */
   function update(patch) {
     storage.setItem(KEY, JSON.stringify({ ...get(), ...patch }));
@@ -57,6 +57,13 @@ export function createSettings(storage = localStorage) {
      */
     setCameraOn(value) {
       update({ cameraOn: value });
+    },
+    /**
+     * Set and persist the camera viewport height preset index (0–4).
+     * @param {number} value - Index into the camera-height presets.
+     */
+    setCameraHeight(value) {
+      update({ cameraHeight: value });
     },
   };
 }

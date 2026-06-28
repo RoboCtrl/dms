@@ -7,6 +7,7 @@ import * as db from "./db.js";
 import { createStore } from "./store.js";
 import { createSettings } from "./settings.js";
 import { applyTheme } from "./theme.js";
+import { applyCameraHeight } from "./viewport.js";
 import { createHistoryPanel } from "./ui/history-panel.js";
 import { createOptionsMenu } from "./ui/options-menu.js";
 import { createBottomBar } from "./ui/bottom-bar.js";
@@ -16,6 +17,7 @@ import { createScanner } from "./scanner.js";
 async function main() {
   const settings = createSettings();
   applyTheme(settings.get().theme);
+  applyCameraHeight(settings.get().cameraHeight);
 
   const store = createStore(db);
   await store.load();
