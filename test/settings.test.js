@@ -18,6 +18,10 @@ test("defaults to dark theme and duplicates shown", () => {
     hideDuplicates: false,
     cameraOn: true,
     cameraHeight: 3,
+    freezeMode: "auto",
+    freezeTimer: 1,
+    freezeTapDelay: 2,
+    freezeAutoDelay: 2,
   });
 });
 
@@ -32,6 +36,10 @@ test("persists theme and hideDuplicates across instances", () => {
     hideDuplicates: true,
     cameraOn: true,
     cameraHeight: 3,
+    freezeMode: "auto",
+    freezeTimer: 1,
+    freezeTapDelay: 2,
+    freezeAutoDelay: 2,
   });
 });
 
@@ -57,4 +65,28 @@ test("setCameraHeight persists the chosen index", () => {
   s1.setCameraHeight(0);
   const s2 = createSettings(storage);
   assert.equal(s2.get().cameraHeight, 0);
+});
+
+test("freeze defaults: auto mode, indices 1/2/2", () => {
+  const s = createSettings(fakeStorage());
+  const g = s.get();
+  assert.equal(g.freezeMode, "auto");
+  assert.equal(g.freezeTimer, 1);
+  assert.equal(g.freezeTapDelay, 2);
+  assert.equal(g.freezeAutoDelay, 2);
+});
+
+test("freeze setters persist across instances", () => {
+  const storage = fakeStorage();
+  const s1 = createSettings(storage);
+  s1.setFreezeMode("tap");
+  s1.setFreezeTimer(0);
+  s1.setFreezeTapDelay(3);
+  s1.setFreezeAutoDelay(0);
+  const s2 = createSettings(storage);
+  const g = s2.get();
+  assert.equal(g.freezeMode, "tap");
+  assert.equal(g.freezeTimer, 0);
+  assert.equal(g.freezeTapDelay, 3);
+  assert.equal(g.freezeAutoDelay, 0);
 });

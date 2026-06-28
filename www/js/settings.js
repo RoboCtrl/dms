@@ -4,7 +4,16 @@
  */
 
 const KEY = "dms.settings";
-const DEFAULTS = { theme: "dark", hideDuplicates: false, cameraOn: true, cameraHeight: 3 };
+const DEFAULTS = {
+  theme: "dark",
+  hideDuplicates: false,
+  cameraOn: true,
+  cameraHeight: 3,
+  freezeMode: "auto",
+  freezeTimer: 1,
+  freezeTapDelay: 2,
+  freezeAutoDelay: 2,
+};
 
 /**
  * Create a settings accessor bound to a storage backend.
@@ -15,7 +24,7 @@ export function createSettings(storage = localStorage) {
   /**
    * Read settings, merging stored values over defaults. Malformed JSON falls
    * back to defaults.
-   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number}}
+   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number}}
    */
   function get() {
     try {
@@ -29,7 +38,7 @@ export function createSettings(storage = localStorage) {
 
   /**
    * Persist a partial update merged over current settings.
-   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number}>} patch
+   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number}>} patch
    */
   function update(patch) {
     storage.setItem(KEY, JSON.stringify({ ...get(), ...patch }));
@@ -64,6 +73,34 @@ export function createSettings(storage = localStorage) {
      */
     setCameraHeight(value) {
       update({ cameraHeight: value });
+    },
+    /**
+     * Set and persist the active scanner freeze mode.
+     * @param {"tap"|"timer"|"auto"} mode
+     */
+    setFreezeMode(mode) {
+      update({ freezeMode: mode });
+    },
+    /**
+     * Set and persist the timer-mode duration preset index.
+     * @param {number} index - Index into the freeze-timer presets.
+     */
+    setFreezeTimer(index) {
+      update({ freezeTimer: index });
+    },
+    /**
+     * Set and persist the tap-mode post-resume cooldown preset index.
+     * @param {number} index - Index into the tap-delay presets.
+     */
+    setFreezeTapDelay(index) {
+      update({ freezeTapDelay: index });
+    },
+    /**
+     * Set and persist the auto-mode absence-debounce preset index.
+     * @param {number} index - Index into the auto-delay presets.
+     */
+    setFreezeAutoDelay(index) {
+      update({ freezeAutoDelay: index });
     },
   };
 }
