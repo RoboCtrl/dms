@@ -12,6 +12,7 @@ import { createHistoryPanel } from "./ui/history-panel.js";
 import { createOptionsMenu } from "./ui/options-menu.js";
 import { createBottomBar } from "./ui/bottom-bar.js";
 import { createScanner } from "./scanner.js";
+import { createCatalog } from "./catalog.js";
 
 /** Initialize and start the application. */
 async function main() {
@@ -22,6 +23,9 @@ async function main() {
   const store = createStore(db);
   await store.load();
 
+  const catalog = createCatalog(db);
+  await catalog.load();
+
   const scanner = createScanner({
     onRecognized: (content) => store.recordScan(content),
     settings,
@@ -30,6 +34,7 @@ async function main() {
   const history = createHistoryPanel({
     root: document.getElementById("history"),
     store,
+    catalog,
     getHideDuplicates: () => settings.get().hideDuplicates,
   });
   const bottomBar = createBottomBar({ store });
@@ -49,6 +54,7 @@ async function main() {
   }
 
   store.on("change", render);
+  catalog.on("change", render);
   render();
 
   await scanner.start();
