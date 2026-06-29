@@ -92,6 +92,7 @@ export function createCatalogSection({ catalog, onChange }) {
     const loadBtn = document.createElement("button");
     loadBtn.textContent = "Load selected";
     loadBtn.addEventListener("click", async () => {
+      loadBtn.disabled = true;
       for (const cb of checks) {
         if (cb.checked) await loadFile(cb.value);
       }

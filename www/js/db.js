@@ -13,8 +13,10 @@ const VERSION = 2;
 let dbPromise = null;
 
 /**
- * Open (and memoize) the IndexedDB database, creating the object store and
- * the content index on first run.
+ * Open (and memoize) the IndexedDB database. On first run (or upgrade) creates
+ * both the "scans" store (with its "byContent" index) and the "catalog" store
+ * (with its unique "byToken" index). Guards already-existing stores so that
+ * upgrading from v1 to v2 preserves existing scans data.
  * @returns {Promise<IDBDatabase>} The open database connection.
  */
 function openDB() {
