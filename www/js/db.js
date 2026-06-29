@@ -1,12 +1,14 @@
 /**
- * IndexedDB persistence layer for scan records. Owns the database connection
+ * IndexedDB persistence layer for scan records and catalog entries. Owns the database connection
  * and exposes async CRUD plus size estimation. Knows nothing about the DOM.
- * A record is `{ id: number, content: string, timestamp: number }`.
+ * A scan record is `{ id: number, content: string, timestamp: number }`.
+ * A catalog record is `{ id: number, token: string, rn?: number, text?: string, svg?: string, png?: string }`.
  */
 
 const DB_NAME = "dms";
 const STORE = "scans";
-const VERSION = 1;
+const CATALOG = "catalog";
+const VERSION = 2;
 
 let dbPromise = null;
 
@@ -27,6 +29,13 @@ function openDB() {
           autoIncrement: true,
         });
         store.createIndex("byContent", "content", { unique: false });
+      }
+      if (!idb.objectStoreNames.contains(CATALOG)) {
+        const cat = idb.createObjectStore(CATALOG, {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        cat.createIndex("byToken", "token", { unique: true });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -127,6 +136,61 @@ export async function estimateSize() {
     }
   }
   return { count: records.length, bytes };
+}
+
+/**
+ * Get all catalog records ascending by id.
+ * @returns {Promise<Array<{id:number, token:string, rn?:number, text?:string, svg?:string, png?:string}>>}
+ */
+export async function getAllCatalog() {
+  const idb = await openDB();
+  return new Promise((resolve, reject) => {
+    const req = idb
+      .transaction(CATALOG, "readonly")
+      .objectStore(CATALOG)
+      .getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/**
+ * Replace the entire catalog with a new entry set in a single transaction:
+ * the store is cleared, then each entry is added with a fresh autoincrement id
+ * (any incoming `id` is dropped). Callers must ensure tokens are unique.
+ * @param {Array<{token:string, rn?:number, text?:string, svg?:string, png?:string}>} entries
+ * @returns {Promise<void>}
+ */
+export async function replaceAllCatalog(entries) {
+  const idb = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = idb.transaction(CATALOG, "readwrite");
+    const store = tx.objectStore(CATALOG);
+    store.clear();
+    for (const entry of entries) {
+      const { id, ...rest } = entry;
+      void id;
+      store.add(rest);
+    }
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+}
+
+/**
+ * Remove every catalog record.
+ * @returns {Promise<void>}
+ */
+export async function clearCatalog() {
+  const idb = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = idb.transaction(CATALOG, "readwrite");
+    tx.objectStore(CATALOG).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
 }
 
 /**
