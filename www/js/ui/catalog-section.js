@@ -41,7 +41,7 @@ export function createCatalogSection({ catalog, onChange }) {
       entries = validateCatalog(json);
     } catch (err) {
       console.error(err);
-      alert(`Could not import ${name}: ${err.message}`);
+      alert(`Could not import ${name}: ${err?.message ?? String(err)}`);
       return;
     }
     const existing = catalog.getEntries();
@@ -62,18 +62,21 @@ export function createCatalogSection({ catalog, onChange }) {
    * @returns {Promise<void>}
    */
   async function showFiles() {
+    importBtn.disabled = true;
     filesEl.replaceChildren();
     let files;
     try {
       files = await listCatalogFiles(CATALOG_BASE_URL);
     } catch (err) {
       console.error(err);
-      alert(`Could not list catalog files: ${err.message}`);
+      alert(`Could not list catalog files: ${err?.message ?? String(err)}`);
+      importBtn.disabled = false;
       return;
     }
     if (files.length === 0) {
       filesEl.textContent = "No catalog files found.";
       filesEl.hidden = false;
+      importBtn.disabled = false;
       return;
     }
     const checks = files.map((name) => {
@@ -99,6 +102,7 @@ export function createCatalogSection({ catalog, onChange }) {
     });
     filesEl.appendChild(loadBtn);
     filesEl.hidden = false;
+    importBtn.disabled = false;
   }
 
   importBtn.addEventListener("click", showFiles);
