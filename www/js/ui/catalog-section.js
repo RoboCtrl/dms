@@ -1,0 +1,108 @@
+import {
+  CATALOG_BASE_URL,
+  listCatalogFiles,
+  fetchCatalogFile,
+  validateCatalog,
+  findConflicts,
+  mergeEntries,
+} from "../catalog-import.js";
+
+/**
+ * Create the catalog options section. Owns the "Catalog" group in the options
+ * overlay: an entry-count readout, an "Import catalogs" button that lists the
+ * remote .json files, and the per-file load flow (fetch, validate, resolve
+ * duplicate tokens via a batched confirm, persist).
+ * @param {object} opts
+ * @param {object} opts.catalog - The in-memory catalog model.
+ * @param {() => void} opts.onChange - Called after the catalog changes so the app re-renders.
+ * @returns {{refreshStats: () => void}}
+ */
+export function createCatalogSection({ catalog, onChange }) {
+  const importBtn = document.getElementById("catalog-import-btn");
+  const statsEl = document.getElementById("catalog-stats");
+  const filesEl = document.getElementById("catalog-files");
+
+  /** Update the catalog entry-count readout. */
+  function refreshStats() {
+    statsEl.textContent = `${catalog.getEntries().length} entries`;
+  }
+
+  /**
+   * Fetch, validate, resolve conflicts for, and persist one catalog file.
+   * Reports parse/validation failures to the user and the console, then skips
+   * the file. Conflicting tokens trigger a single batched confirm.
+   * @param {string} name - The catalog file name.
+   * @returns {Promise<void>}
+   */
+  async function loadFile(name) {
+    let entries;
+    try {
+      const json = await fetchCatalogFile(CATALOG_BASE_URL, name);
+      entries = validateCatalog(json);
+    } catch (err) {
+      console.error(err);
+      alert(`Could not import ${name}: ${err.message}`);
+      return;
+    }
+    const existing = catalog.getEntries();
+    const conflicts = findConflicts(existing, entries);
+    let replace = true;
+    if (conflicts.length > 0) {
+      replace = confirm(
+        `${name}: ${conflicts.length} token(s) already exist. ` +
+          `Replace them with the new versions? (Cancel keeps the existing ones.)`,
+      );
+    }
+    await catalog.replaceAll(mergeEntries(existing, entries, replace));
+  }
+
+  /**
+   * Fetch the remote listing and render a checkbox per available file plus a
+   * "Load selected" button that imports the checked files in order.
+   * @returns {Promise<void>}
+   */
+  async function showFiles() {
+    filesEl.replaceChildren();
+    let files;
+    try {
+      files = await listCatalogFiles(CATALOG_BASE_URL);
+    } catch (err) {
+      console.error(err);
+      alert(`Could not list catalog files: ${err.message}`);
+      return;
+    }
+    if (files.length === 0) {
+      filesEl.textContent = "No catalog files found.";
+      filesEl.hidden = false;
+      return;
+    }
+    const checks = files.map((name) => {
+      const label = document.createElement("label");
+      label.className = "catalog-file";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.value = name;
+      label.append(cb, document.createTextNode(" " + name));
+      filesEl.appendChild(label);
+      return cb;
+    });
+    const loadBtn = document.createElement("button");
+    loadBtn.textContent = "Load selected";
+    loadBtn.addEventListener("click", async () => {
+      for (const cb of checks) {
+        if (cb.checked) await loadFile(cb.value);
+      }
+      filesEl.replaceChildren();
+      filesEl.hidden = true;
+      refreshStats();
+      onChange();
+    });
+    filesEl.appendChild(loadBtn);
+    filesEl.hidden = false;
+  }
+
+  importBtn.addEventListener("click", showFiles);
+  refreshStats();
+
+  return { refreshStats };
+}

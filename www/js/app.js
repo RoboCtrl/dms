@@ -13,6 +13,7 @@ import { createOptionsMenu } from "./ui/options-menu.js";
 import { createBottomBar } from "./ui/bottom-bar.js";
 import { createScanner } from "./scanner.js";
 import { createCatalog } from "./catalog.js";
+import { createCatalogSection } from "./ui/catalog-section.js";
 
 /** Initialize and start the application. */
 async function main() {
@@ -46,6 +47,7 @@ async function main() {
       scanner.refreshFreezeConfig();
     },
   });
+  createCatalogSection({ catalog, onChange: render });
 
   /** Re-render all store-driven UI. */
   function render() {
