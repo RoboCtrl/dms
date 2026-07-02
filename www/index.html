@@ -39,8 +39,10 @@
     <!-- Options overlay -->
     <div id="options" class="overlay" hidden>
       <div class="options-panel" role="dialog" aria-modal="true">
-        <button id="options-close" aria-label="Close"></button>
-        <h2>Options</h2>
+        <div class="options-header">
+          <h2>Options</h2>
+          <button id="options-close" aria-label="Close"></button>
+        </div>
 
         <label class="opt-row">
           <span>Theme</span>
@@ -48,11 +50,6 @@
             <option value="dark">Dark</option>
             <option value="light">Light</option>
           </select>
-        </label>
-
-        <label class="opt-row">
-          <span>Hide duplicates</span>
-          <input id="opt-hide-dup" type="checkbox" />
         </label>
 
         <section class="opt-group">
@@ -97,6 +94,39 @@
         </section>
 
         <section class="opt-group">
+          <h3>List entries</h3>
+
+          <label class="opt-row">
+            <span>Hide duplicates</span>
+            <input id="opt-hide-dup" type="checkbox" />
+          </label>
+
+          <fieldset class="opt-radios">
+            <legend>Grouping mode</legend>
+
+            <label class="opt-radio-row">
+              <input type="radio" name="group-mode" value="full" id="group-mode-full" />
+              <span>Only group full matches</span>
+            </label>
+
+            <label class="opt-radio-row">
+              <input type="radio" name="group-mode" value="firstSuffix" id="group-mode-first-suffix" />
+              <span>Group on first token suffix</span>
+            </label>
+
+            <label class="opt-radio-row">
+              <input type="radio" name="group-mode" value="secondToken" id="group-mode-second-token" />
+              <span>Group on second token</span>
+            </label>
+
+            <label class="opt-radio-row">
+              <input type="radio" name="group-mode" value="none" id="group-mode-none" />
+              <span>Never group</span>
+            </label>
+          </fieldset>
+        </section>
+
+        <section class="opt-group">
           <h3>Database</h3>
           <p id="db-stats">0 entries &middot; 0 kB</p>
           <button id="clear-db-btn">Clear database</button>
@@ -106,6 +136,7 @@
           <h3>Catalog</h3>
           <p id="catalog-stats">0 entries</p>
           <button id="catalog-import-btn">Import catalogs</button>
+          <button id="catalog-clear-btn">Clear catalog</button>
           <div id="catalog-files" hidden></div>
         </section>
 

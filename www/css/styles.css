@@ -285,7 +285,20 @@ body {
   background: var(--panel);
   color: var(--content-fg);
   border-radius: 10px;
-  padding: 16px;
+  padding: 0 16px 16px;
+}
+
+/* Sticky header: title + close button stay pinned while the body scrolls. */
+.options-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--panel);
+  padding-top: 4px;
+  padding-bottom: 8px;
 }
 
 .options-panel h2 {
@@ -299,13 +312,11 @@ body {
 }
 
 #options-close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
   font-size: 22px;
   background: none;
   border: none;
   color: var(--content-fg);
+  padding: 0;
 }
 
 .opt-row {
@@ -343,6 +354,25 @@ body {
 
 .opt-freeze-row input[type="range"] {
   width: 96px;
+}
+
+.opt-radios {
+  border: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.opt-radios legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.opt-radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
 }
 
 [hidden] {
