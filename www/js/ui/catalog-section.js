@@ -10,8 +10,9 @@ import {
 /**
  * Create the catalog options section. Owns the "Catalog" group in the options
  * overlay: an entry-count readout, an "Import catalogs" button that lists the
- * remote .json files, and the per-file load flow (fetch, validate, resolve
- * duplicate tokens via a batched confirm, persist).
+ * remote .json files, the per-file load flow (fetch, validate, resolve
+ * duplicate tokens via a batched confirm, persist), and a "Clear catalog"
+ * action guarded by a confirmation prompt.
  * @param {object} opts
  * @param {object} opts.catalog - The in-memory catalog model.
  * @param {() => void} opts.onChange - Called after the catalog changes so the app re-renders.
@@ -21,6 +22,7 @@ export function createCatalogSection({ catalog, onChange }) {
   const importBtn = document.getElementById("catalog-import-btn");
   const statsEl = document.getElementById("catalog-stats");
   const filesEl = document.getElementById("catalog-files");
+  const clearBtn = document.getElementById("catalog-clear-btn");
 
   /** Update the catalog entry-count readout. */
   function refreshStats() {
@@ -107,6 +109,12 @@ export function createCatalogSection({ catalog, onChange }) {
   }
 
   importBtn.addEventListener("click", showFiles);
+  clearBtn.addEventListener("click", async () => {
+    if (!confirm("Delete all catalog entries? This cannot be undone.")) return;
+    await catalog.clear();
+    refreshStats();
+    onChange();
+  });
   refreshStats();
 
   return { refreshStats };
