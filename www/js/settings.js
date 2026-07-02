@@ -7,6 +7,7 @@ const KEY = "dms.settings";
 const DEFAULTS = {
   theme: "dark",
   hideDuplicates: false,
+  groupMode: "full",
   cameraOn: true,
   cameraHeight: 3,
   freezeMode: "auto",
@@ -59,6 +60,13 @@ export function createSettings(storage = localStorage) {
      */
     setHideDuplicates(value) {
       update({ hideDuplicates: value });
+    },
+    /**
+     * Set and persist the list-entry grouping mode.
+     * @param {"full"|"firstSuffix"|"secondToken"|"none"} mode
+     */
+    setGroupMode(mode) {
+      update({ groupMode: mode });
     },
     /**
      * Set and persist whether the camera is on.

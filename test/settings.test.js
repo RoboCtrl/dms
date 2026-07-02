@@ -16,6 +16,7 @@ test("defaults to dark theme and duplicates shown", () => {
   assert.deepEqual(s.get(), {
     theme: "dark",
     hideDuplicates: false,
+    groupMode: "full",
     cameraOn: true,
     cameraHeight: 3,
     freezeMode: "auto",
@@ -34,6 +35,7 @@ test("persists theme and hideDuplicates across instances", () => {
   assert.deepEqual(s2.get(), {
     theme: "light",
     hideDuplicates: true,
+    groupMode: "full",
     cameraOn: true,
     cameraHeight: 3,
     freezeMode: "auto",
@@ -89,4 +91,17 @@ test("freeze setters persist across instances", () => {
   assert.equal(g.freezeTimer, 0);
   assert.equal(g.freezeTapDelay, 3);
   assert.equal(g.freezeAutoDelay, 0);
+});
+
+test("groupMode defaults to full", () => {
+  const s = createSettings(fakeStorage());
+  assert.equal(s.get().groupMode, "full");
+});
+
+test("setGroupMode persists across instances", () => {
+  const storage = fakeStorage();
+  const s1 = createSettings(storage);
+  s1.setGroupMode("secondToken");
+  const s2 = createSettings(storage);
+  assert.equal(s2.get().groupMode, "secondToken");
 });
