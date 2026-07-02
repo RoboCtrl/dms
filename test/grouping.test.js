@@ -23,6 +23,14 @@ test("firstSuffix is ungrouped when the first token is too short or absent", () 
   assert.equal(groupKey("   ", "firstSuffix"), null);
 });
 
+test("firstToken keys on the first whitespace token", () => {
+  assert.equal(groupKey("12 AB34 5 6", "firstToken"), "12");
+});
+
+test("firstToken is ungrouped when there is no first token", () => {
+  assert.equal(groupKey("   ", "firstToken"), null);
+});
+
 test("secondToken keys on the second whitespace token", () => {
   assert.equal(groupKey("12 AB34 5 6", "secondToken"), "AB34");
 });

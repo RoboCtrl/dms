@@ -63,7 +63,7 @@ export function createSettings(storage = localStorage) {
     },
     /**
      * Set and persist the list-entry grouping mode.
-     * @param {"full"|"firstSuffix"|"secondToken"|"none"} mode
+     * @param {"full"|"firstToken"|"firstSuffix"|"secondToken"|"none"} mode
      */
     setGroupMode(mode) {
       update({ groupMode: mode });
