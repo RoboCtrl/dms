@@ -37,6 +37,7 @@ async function main() {
     store,
     catalog,
     getHideDuplicates: () => settings.get().hideDuplicates,
+    getGroupMode: () => settings.get().groupMode,
   });
   const bottomBar = createBottomBar({ store });
   createOptionsMenu({

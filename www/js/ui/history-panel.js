@@ -11,9 +11,10 @@ const LONG_PRESS_MS = 500;
  * @param {object} opts.store - The store instance (Task 3).
  * @param {object} opts.catalog - The catalog model; supplies displayFor().
  * @param {() => boolean} opts.getHideDuplicates - Current hide-duplicates setting.
+ * @param {() => string} opts.getGroupMode - Current grouping mode.
  * @returns {{render: () => void}}
  */
-export function createHistoryPanel({ root, store, catalog, getHideDuplicates }) {
+export function createHistoryPanel({ root, store, catalog, getHideDuplicates, getGroupMode }) {
   /**
    * Build a single entry row element for a record.
    * @param {{id:number, content:string, timestamp:number}} rec
@@ -30,7 +31,7 @@ export function createHistoryPanel({ root, store, catalog, getHideDuplicates }) 
 
     const counter = document.createElement("span");
     counter.className = "counter";
-    counter.textContent = String(store.countFor(rec.content));
+    counter.textContent = String(store.countFor(rec.content, getGroupMode()));
     left.appendChild(counter);
 
     // Center column: scanned content (upper) stacked over the timestamp (lower).
@@ -113,7 +114,7 @@ export function createHistoryPanel({ root, store, catalog, getHideDuplicates }) 
     /** Re-render the full list from current store state. */
     render() {
       root.replaceChildren();
-      for (const rec of store.getVisible(getHideDuplicates())) {
+      for (const rec of store.getVisible(getHideDuplicates(), getGroupMode())) {
         root.appendChild(buildEntry(rec));
       }
     },
