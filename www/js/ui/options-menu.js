@@ -6,9 +6,10 @@ import * as db from "../db.js";
 
 /**
  * Create the options-menu controller. Manages the overlay's open/close state
- * and wires the theme select, hide-duplicates toggle, camera viewport height
- * slider, Scanner freeze radio+slider controls, database stats, and the
- * clear-database action (guarded by a confirmation prompt).
+ * and wires the theme select, hide-duplicates toggle, list-entry grouping-mode
+ * radios, camera viewport height slider, Scanner freeze radio+slider controls,
+ * database stats, and the clear-database action (guarded by a confirmation
+ * prompt).
  * @param {object} opts
  * @param {object} opts.store - The store instance (Task 3).
  * @param {object} opts.settings - The settings instance (Task 4).
@@ -26,6 +27,7 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const freezeTimer = document.getElementById("opt-freeze-timer");
   const freezeTap = document.getElementById("opt-freeze-tap");
   const freezeAuto = document.getElementById("opt-freeze-auto");
+  const groupRadios = overlay.querySelectorAll('input[name="group-mode"]');
   const stats = document.getElementById("db-stats");
   const clearBtn = document.getElementById("clear-db-btn");
 
@@ -50,6 +52,9 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
     freezeTimer.value = String(s.freezeTimer);
     freezeTap.value = String(s.freezeTapDelay);
     freezeAuto.value = String(s.freezeAutoDelay);
+    for (const radio of groupRadios) {
+      radio.checked = radio.value === s.groupMode;
+    }
     refreshStats();
     overlay.hidden = false;
   }
@@ -87,6 +92,14 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
     radio.addEventListener("change", () => {
       if (!radio.checked) return;
       settings.setFreezeMode(radio.value);
+      onSettingsChange();
+    });
+  }
+
+  for (const radio of groupRadios) {
+    radio.addEventListener("change", () => {
+      if (!radio.checked) return;
+      settings.setGroupMode(radio.value);
       onSettingsChange();
     });
   }
