@@ -5,6 +5,8 @@
  * Depends only on an injected db module (Task 2's interface).
  */
 
+import { groupKey } from "./util/grouping.js";
+
 /**
  * Create a store bound to a persistence module.
  * @param {object} db - Persistence module exposing add/getAll/deleteById/clear.
@@ -85,29 +87,40 @@ export function createStore(db) {
     },
 
     /**
-     * Return records newest first. When hideDuplicates is true, only the newest
-     * record of each distinct content is included.
-     * @param {boolean} hideDuplicates - Whether to collapse duplicates.
+     * Return records newest first. When hideDuplicates is true, keep only the
+     * newest record per non-null group key; records whose group key is null are
+     * ungrouped and always kept.
+     * @param {boolean} hideDuplicates - Whether to collapse grouped duplicates.
+     * @param {"full"|"firstSuffix"|"secondToken"|"none"} groupMode - Grouping mode.
      * @returns {Array<{id:number, content:string, timestamp:number}>}
      */
-    getVisible(hideDuplicates) {
+    getVisible(hideDuplicates, groupMode) {
       const newestFirst = [...records].reverse();
       if (!hideDuplicates) return newestFirst;
       const seen = new Set();
       return newestFirst.filter((r) => {
-        if (seen.has(r.content)) return false;
-        seen.add(r.content);
+        const key = groupKey(r.content, groupMode);
+        if (key === null) return true;
+        if (seen.has(key)) return false;
+        seen.add(key);
         return true;
       });
     },
 
     /**
-     * Count how many mirrored records share the exact given content.
-     * @param {string} content - Content to count.
-     * @returns {number} The number of identical records.
+     * Count how many mirrored records share the group key of the given content
+     * under a grouping mode. Ungrouped content (null key) always counts as 1.
+     * @param {string} content - Content whose group to count.
+     * @param {"full"|"firstSuffix"|"secondToken"|"none"} groupMode - Grouping mode.
+     * @returns {number} The number of records in the same group.
      */
-    countFor(content) {
-      return records.reduce((n, r) => n + (r.content === content ? 1 : 0), 0);
+    countFor(content, groupMode) {
+      const key = groupKey(content, groupMode);
+      if (key === null) return 1;
+      return records.reduce(
+        (n, r) => n + (groupKey(r.content, groupMode) === key ? 1 : 0),
+        0,
+      );
     },
 
     /**
