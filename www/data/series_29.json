@@ -1,26 +1,50 @@
 {
-  "418S6": {
+  "6603331": {
     "rn": 1,
     "text": "Mech T-Rex"
   },
-  "718S6": {
+  "6603321": {
   "rn": 2,
   "text": "Diver & Fish"
   },
-  "518S6": {
+  "6603325": {
+  "rn": 3,
+  "text": "Bionicle Cosplayer"
+  },
+  "6603328": {
+  "rn": 4,
+  "text": "MISSING: Monster Hunter"
+  },
+  "6603324": {
   "rn": 5,
   "text": "Chef & Dragon"
   },
-  "720S6": {
+  "6603330": {
+  "rn": 6,
+  "text": "Trash Monster"
+  },
+  "6603323": {
   "rn": 7,
   "text": "Boba Drink Costume"
   },
-  "318S6": {
+  "6603322": {
+  "rn": 8,
+  "text": "Tuba Player"
+  },
+  "6603320": {
   "rn": 9,
   "text": "Football Player"
   },
-  "620S6": {
+  "6603329": {
+  "rn": 9,
+  "text": "MISSING: Cute Witch"
+  },
+  "6603327": {
     "rn": 11,
     "text": "Ninja Warrior"
+  }
+  "6603326": {
+    "rn": 12,
+    "text": "Unicorn Elf"
   }
 }
