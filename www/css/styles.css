@@ -396,6 +396,33 @@ body {
   height: 18px;
 }
 
+/* --- Toast notifications --- */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  max-width: 88%;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--content-fg);
+  border-left: 4px solid var(--accent);
+  box-shadow: 0 2px 12px #00000066;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+#toast.toast-visible {
+  opacity: 1;
+}
+
+#toast.toast-error {
+  border-left-color: #e5484d;
+}
+
 [hidden] {
   display: none !important;
 }

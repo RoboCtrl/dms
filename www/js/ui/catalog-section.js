@@ -6,13 +6,15 @@ import {
   findConflicts,
   mergeEntries,
 } from "../catalog-import.js";
+import { showToast } from "./toast.js";
 
 /**
  * Create the catalog options section. Owns the "Catalog" group in the options
  * overlay: an entry-count readout, an "Import catalogs" button that lists the
  * remote .json files, the per-file load flow (fetch, validate, resolve
  * duplicate tokens via a batched confirm, persist), and a "Clear catalog"
- * action guarded by a confirmation prompt.
+ * action guarded by a confirmation prompt. Import results and failures are
+ * reported via toasts instead of alerts.
  * @param {object} opts
  * @param {object} opts.catalog - The in-memory catalog model.
  * @param {() => void} opts.onChange - Called after the catalog changes so the app re-renders.
@@ -43,7 +45,9 @@ export function createCatalogSection({ catalog, onChange }) {
       entries = validateCatalog(json);
     } catch (err) {
       console.error(err);
-      alert(`Could not import ${name}: ${err?.message ?? String(err)}`);
+      showToast(`Could not import ${name}: ${err?.message ?? String(err)}`, {
+        error: true,
+      });
       return;
     }
     const existing = catalog.getEntries();
@@ -56,6 +60,7 @@ export function createCatalogSection({ catalog, onChange }) {
       );
     }
     await catalog.replaceAll(mergeEntries(existing, entries, replace));
+    showToast(`Imported ${name} — ${entries.length} entries`);
   }
 
   /**
@@ -71,7 +76,9 @@ export function createCatalogSection({ catalog, onChange }) {
       files = await listCatalogFiles(CATALOG_BASE_URL);
     } catch (err) {
       console.error(err);
-      alert(`Could not list catalog files: ${err?.message ?? String(err)}`);
+      showToast(`Could not list catalog files: ${err?.message ?? String(err)}`, {
+        error: true,
+      });
       importBtn.disabled = false;
       return;
     }
