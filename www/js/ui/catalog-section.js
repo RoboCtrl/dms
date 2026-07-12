@@ -82,13 +82,16 @@ export function createCatalogSection({ catalog, onChange }) {
       return;
     }
     const checks = files.map((name) => {
+      const row = document.createElement("div");
+      row.className = "catalog-file";
       const label = document.createElement("label");
-      label.className = "catalog-file";
+      label.className = "catalog-file-label";
       const cb = document.createElement("input");
       cb.type = "checkbox";
       cb.value = name;
       label.append(cb, document.createTextNode(" " + name));
-      filesEl.appendChild(label);
+      row.appendChild(label);
+      filesEl.appendChild(row);
       return cb;
     });
     const loadBtn = document.createElement("button");
