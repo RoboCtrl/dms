@@ -2,7 +2,7 @@
  * Service worker providing an offline app shell. Caches core assets on install
  * and serves cache-first with a network fallback.
  */
-const CACHE = "dms-v10";
+const CACHE = "dms-v11";
 const ASSETS = [
   ".",
   "index.html",
@@ -19,6 +19,7 @@ const ASSETS = [
   "js/scanner.js",
   "js/freeze.js",
   "js/util/freeze-controller.js",
+  "js/util/freeze-mask.js",
   "js/util/crop-region.js",
   "js/util/catalog-match.js",
   "js/util/grouping.js",
