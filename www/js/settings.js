@@ -6,10 +6,10 @@
 const KEY = "dms.settings";
 const DEFAULTS = {
   theme: "dark",
-  hideDuplicates: false,
-  groupMode: "full",
+  hideDuplicates: true,
+  groupMode: "firstToken",
   cameraOn: true,
-  cameraHeight: 3,
+  cameraHeight: 1,
   freezeMode: "auto",
   freezeTimer: 1,
   freezeTapDelay: 2,

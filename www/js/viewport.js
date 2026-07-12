@@ -3,16 +3,16 @@
  *
  * The options panel exposes a 5-position slider; each position maps to one of
  * the flex-basis values below, which is written to the `--cam-height` CSS
- * custom property consumed by `#camera-panel` in styles.css. Index 3 (45%) is
- * the historical default; indices 0–2 are progressively shorter and index 4 is
- * taller.
+ * custom property consumed by `#camera-panel` in styles.css. Index 1 (33%) is
+ * the default; index 3 (45%) is the historical default kept as a preset;
+ * indices 0–2 are progressively shorter and index 4 is taller.
  */
 
 /** @type {string[]} Flex-basis heights for the camera panel, shortest first. */
 export const CAMERA_HEIGHTS = ["25%", "33%", "39%", "45%", "60%"];
 
-/** Index of the default camera-height preset (matches the original 45%). */
-export const DEFAULT_CAMERA_HEIGHT = 3;
+/** Index of the default camera-height preset (33%, second-smallest). */
+export const DEFAULT_CAMERA_HEIGHT = 1;
 
 /**
  * Apply a camera-height preset by writing its flex-basis to the `--cam-height`

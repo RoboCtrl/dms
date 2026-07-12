@@ -11,14 +11,14 @@ function fakeStorage() {
   };
 }
 
-test("defaults to dark theme and duplicates shown", () => {
+test("defaults to dark theme, hidden duplicates, first-token grouping", () => {
   const s = createSettings(fakeStorage());
   assert.deepEqual(s.get(), {
     theme: "dark",
-    hideDuplicates: false,
-    groupMode: "full",
+    hideDuplicates: true,
+    groupMode: "firstToken",
     cameraOn: true,
-    cameraHeight: 3,
+    cameraHeight: 1,
     freezeMode: "auto",
     freezeTimer: 1,
     freezeTapDelay: 2,
@@ -30,14 +30,14 @@ test("persists theme and hideDuplicates across instances", () => {
   const storage = fakeStorage();
   const s1 = createSettings(storage);
   s1.setTheme("light");
-  s1.setHideDuplicates(true);
+  s1.setHideDuplicates(false);
   const s2 = createSettings(storage);
   assert.deepEqual(s2.get(), {
     theme: "light",
-    hideDuplicates: true,
-    groupMode: "full",
+    hideDuplicates: false,
+    groupMode: "firstToken",
     cameraOn: true,
-    cameraHeight: 3,
+    cameraHeight: 1,
     freezeMode: "auto",
     freezeTimer: 1,
     freezeTapDelay: 2,
@@ -56,9 +56,9 @@ test("setCameraOn persists the value", () => {
   assert.equal(s.get().cameraOn, false);
 });
 
-test("cameraHeight defaults to index 3 (current height)", () => {
+test("cameraHeight defaults to index 1 (second-smallest)", () => {
   const s = createSettings(fakeStorage());
-  assert.equal(s.get().cameraHeight, 3);
+  assert.equal(s.get().cameraHeight, 1);
 });
 
 test("setCameraHeight persists the chosen index", () => {
@@ -93,9 +93,9 @@ test("freeze setters persist across instances", () => {
   assert.equal(g.freezeAutoDelay, 0);
 });
 
-test("groupMode defaults to full", () => {
+test("groupMode defaults to firstToken", () => {
   const s = createSettings(fakeStorage());
-  assert.equal(s.get().groupMode, "full");
+  assert.equal(s.get().groupMode, "firstToken");
 });
 
 test("setGroupMode persists across instances", () => {
