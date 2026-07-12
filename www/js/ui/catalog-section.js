@@ -2,11 +2,13 @@ import {
   CATALOG_BASE_URL,
   listCatalogFiles,
   fetchCatalogFile,
+  fetchText,
   validateCatalog,
   findConflicts,
   mergeEntries,
 } from "../catalog-import.js";
 import { showToast } from "./toast.js";
+import { createPreviewOverlay } from "./preview-overlay.js";
 
 /**
  * Create the catalog options section. Owns the "Catalog" group in the options
@@ -25,6 +27,7 @@ export function createCatalogSection({ catalog, onChange }) {
   const statsEl = document.getElementById("catalog-stats");
   const filesEl = document.getElementById("catalog-files");
   const clearBtn = document.getElementById("catalog-clear-btn");
+  const preview = createPreviewOverlay();
 
   /** Update the catalog entry-count readout. */
   function refreshStats() {
@@ -98,6 +101,23 @@ export function createCatalogSection({ catalog, onChange }) {
       cb.value = name;
       label.append(cb, document.createTextNode(" " + name));
       row.appendChild(label);
+      const pvBtn = document.createElement("button");
+      pvBtn.type = "button";
+      pvBtn.className = "catalog-preview-btn";
+      pvBtn.textContent = "Preview";
+      pvBtn.addEventListener("click", async () => {
+        pvBtn.disabled = true;
+        try {
+          preview.open(name, await fetchText(CATALOG_BASE_URL + name));
+        } catch (err) {
+          console.error(err);
+          showToast(`Could not preview ${name}: ${err?.message ?? String(err)}`, {
+            error: true,
+          });
+        }
+        pvBtn.disabled = false;
+      });
+      row.appendChild(pvBtn);
       filesEl.appendChild(row);
       return cb;
     });

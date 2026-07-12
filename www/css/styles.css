@@ -311,7 +311,8 @@ body {
   color: var(--link);
 }
 
-#options-close {
+#options-close,
+#preview-close {
   font-size: 22px;
   background: none;
   border: none;
@@ -421,6 +422,29 @@ body {
 
 #toast.toast-error {
   border-left-color: #e5484d;
+}
+
+/* --- Catalog preview overlay --- */
+#preview {
+  z-index: 20;
+}
+
+#preview-error {
+  color: #e5484d;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+#preview-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+
+.catalog-preview-btn {
+  padding: 6px 10px;
+  font-size: 13px;
 }
 
 [hidden] {

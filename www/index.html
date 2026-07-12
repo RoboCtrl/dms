@@ -153,6 +153,22 @@
       </div>
     </div>
 
+    <!-- Catalog preview overlay (stacks above the options overlay) -->
+    <div id="preview" class="overlay" hidden>
+      <div class="options-panel" role="dialog" aria-modal="true">
+        <div class="options-header">
+          <h2 id="preview-title">Preview</h2>
+          <button id="preview-close" aria-label="Close"></button>
+        </div>
+        <p id="preview-error" hidden></p>
+        <label class="opt-row">
+          <span>Formatted</span>
+          <input id="preview-formatted" type="checkbox" checked />
+        </label>
+        <pre id="preview-content"></pre>
+      </div>
+    </div>
+
     <script src="vendor/zxing/zxing.min.js"></script>
     <script type="module" src="js/app.js"></script>
   </body>

@@ -4,6 +4,7 @@ import {
   parseListing,
   listCatalogFiles,
   fetchCatalogFile,
+  fetchText,
   validateCatalog,
   findConflicts,
   mergeEntries,
@@ -121,4 +122,12 @@ test("parseListing falls back to plain-text tokens when no hrefs", () => {
     "a.json",
     "b.json",
   ]);
+});
+
+test("fetchText returns the body; throws on HTTP error", async () => {
+  assert.equal(await fetchText("u", fetchStub("body text")), "body text");
+  await assert.rejects(
+    fetchText("u", fetchStub("", false, 404)),
+    /HTTP 404/,
+  );
 });

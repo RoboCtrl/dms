@@ -64,6 +64,18 @@ function fileNameFromHref(href) {
 }
 
 /**
+ * Fetch a URL and return its body as text, bypassing the HTTP cache.
+ * @param {string} url - The URL to fetch.
+ * @param {typeof fetch} [fetchFn=fetch] - Fetch implementation (injectable for tests).
+ * @returns {Promise<string>} The response body text.
+ */
+export async function fetchText(url, fetchFn = fetch) {
+  const res = await fetchFn(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Fetch failed for ${url}: HTTP ${res.status}`);
+  return res.text();
+}
+
+/**
  * Fetch and parse the remote directory listing into catalog file names.
  * @param {string} baseUrl - The directory URL (with trailing slash).
  * @param {typeof fetch} [fetchFn=fetch] - Fetch implementation (injectable for tests).
