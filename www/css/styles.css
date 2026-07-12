@@ -71,8 +71,18 @@ body {
   object-fit: cover;
 }
 
-#freeze {
-  opacity: 0.5;
+/* Discard animation: the freeze layers shrink slightly towards the detected
+   code (transform-origin set inline by scanner.js) and fade out over 800ms.
+   The transition lives on .discarding only, so removing the class mid-flight
+   snaps the layers back to full scale/opacity instantly — used when a new
+   freeze interrupts a running discard. */
+#freeze.discarding,
+#overlay.discarding {
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 800ms ease-out,
+    transform 800ms ease-out;
 }
 
 #scan-content {

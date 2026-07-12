@@ -4,8 +4,10 @@
  * toggle, and runs its own requestAnimationFrame decode loop that crops each
  * frame to the on-screen reticle region before decoding, so only the indicated
  * area is scanned. Keeps the stream running after a recognition (pausing only
- * result *processing*), overlays the frozen frame at 50% opacity with a
- * highlight polygon, shows the placement reticle while scanning, and throttles
+ * result *processing*), overlays the frozen frame through a radial alpha mask
+ * centered on the detected code (opaque at the code, transparent towards the
+ * edges) with a highlight polygon, discards it with an 800ms shrink-and-fade
+ * animation, shows the placement reticle while scanning, and throttles
  * duplicate recordings via a cooldown gate. Emits recognised content via the
  * onRecognized callback.
  *
@@ -20,6 +22,7 @@ import { setIcon } from "./util/icon.js";
 import { createScanGate } from "./util/scan-gate.js";
 import { createFreezeController } from "./util/freeze-controller.js";
 import { computeCropRegion } from "./util/crop-region.js";
+import { computeFreezeMask } from "./util/freeze-mask.js";
 import { freezeConfigFromSettings } from "./freeze.js";
 
 /**
@@ -55,6 +58,10 @@ export function createScanner({ onRecognized, settings }) {
   const RETICLE_FRACTION = 0.6;
   const RETICLE_PAD = 8;
 
+  // Fallback delay (ms) before force-hiding the freeze layers if the 800ms
+  // discard transition's transitionend event never fires.
+  const DISCARD_FALLBACK_MS = 850;
+
   // Reused offscreen canvas the cropped frame is drawn onto before decoding.
   const capture = document.createElement("canvas");
   const captureCtx = capture.getContext("2d", { willReadFrequently: true });
@@ -64,6 +71,7 @@ export function createScanner({ onRecognized, settings }) {
   let cameraOn = settings.get().cameraOn;
   let stream = null;
   let rafId = 0;
+  let discardTimer = 0;
 
   /**
    * Show a camera error message in place of the video.
@@ -93,12 +101,44 @@ export function createScanner({ onRecognized, settings }) {
   }
 
   /**
+   * Cancel any in-flight discard animation: clears the pending hide timer and
+   * removes the .discarding class from both freeze layers. The CSS transition
+   * is defined on .discarding only, so removing the class snaps the layers
+   * back to full scale/opacity instantly.
+   */
+  function cancelDiscard() {
+    if (discardTimer) {
+      clearTimeout(discardTimer);
+      discardTimer = 0;
+    }
+    freeze.classList.remove("discarding");
+    overlay.classList.remove("discarding");
+  }
+
+  /**
+   * Finish a discard: cancel any animation state and hide both freeze layers.
+   * Idempotent — used as the transition-end handler, the timeout fallback,
+   * and the instant hide path on camera-off.
+   */
+  function endDiscard() {
+    cancelDiscard();
+    freeze.hidden = true;
+    overlay.hidden = true;
+  }
+
+  /**
    * Draw the frozen frame and a highlight polygon around the recognised code.
-   * The freeze layer is rendered at 50% opacity (via CSS) so the live feed
-   * shows through; the overlay polygon stays full opacity.
+   * The freeze layer's alpha channel is shaped by a radial gradient centered
+   * on the detected code — opaque at the code, fully transparent at 2/3 of
+   * the distance to the farthest visible corner — so the live feed shows
+   * through towards the edges. The overlay polygon stays full opacity. Also
+   * cancels any discard animation still in flight (a re-freeze interrupts it)
+   * and records the mask center as the transform-origin both layers shrink
+   * towards when discarded.
    * @param {Array<{getX:()=>number,getY:()=>number}>} points - ZXing result points (video-pixel coords).
    */
   function drawFreeze(points) {
+    cancelDiscard();
     const w = video.videoWidth;
     const h = video.videoHeight;
     for (const c of [freeze, overlay]) {
@@ -106,7 +146,26 @@ export function createScanner({ onRecognized, settings }) {
       c.height = h;
       c.hidden = false;
     }
-    freeze.getContext("2d").drawImage(video, 0, 0, w, h);
+
+    const mask = computeFreezeMask({
+      points: points.map((p) => ({ x: p.getX(), y: p.getY() })),
+      panelW: panel.clientWidth,
+      panelH: panel.clientHeight,
+      videoW: w,
+      videoH: h,
+    });
+    freeze.style.transformOrigin = `${mask.originX}px ${mask.originY}px`;
+    overlay.style.transformOrigin = `${mask.originX}px ${mask.originY}px`;
+
+    const fctx = freeze.getContext("2d");
+    fctx.drawImage(video, 0, 0, w, h);
+    const grad = fctx.createRadialGradient(mask.cx, mask.cy, 0, mask.cx, mask.cy, mask.radius);
+    grad.addColorStop(0, "rgba(0, 0, 0, 1)");
+    grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    fctx.globalCompositeOperation = "destination-in";
+    fctx.fillStyle = grad;
+    fctx.fillRect(0, 0, w, h);
+    fctx.globalCompositeOperation = "source-over";
 
     const ctx = overlay.getContext("2d");
     ctx.clearRect(0, 0, w, h);
@@ -123,14 +182,21 @@ export function createScanner({ onRecognized, settings }) {
     ctx.stroke();
   }
 
-  /** Clear the frozen overlay and resume processing (camera never stopped). */
+  /**
+   * Discard the frozen overlay with the 800ms shrink-and-fade animation and
+   * resume processing (the camera never stopped). The decoded-text bar and
+   * tap hint hide immediately; the freeze/overlay canvases are hidden once
+   * the CSS transition ends, with a timeout fallback in case transitionend
+   * never fires.
+   */
   function resume() {
     if (!frozen) return;
     frozen = false;
-    freeze.hidden = true;
-    overlay.hidden = true;
     content.hidden = true;
     tapHint.hidden = true;
+    freeze.classList.add("discarding");
+    overlay.classList.add("discarding");
+    discardTimer = setTimeout(endDiscard, DISCARD_FALLBACK_MS);
   }
 
   /**
@@ -245,7 +311,8 @@ export function createScanner({ onRecognized, settings }) {
           stream = null;
         }
         video.srcObject = null;
-        resume();
+        resume(); // clears frozen state and starts a discard...
+        endDiscard(); // ...which camera-off cuts short: hide immediately
         freezeCtl.reset();
         reticle.hidden = true;
         camOff.hidden = false;
@@ -259,6 +326,13 @@ export function createScanner({ onRecognized, settings }) {
     // Ignore clicks on the control buttons themselves.
     if (e.target.closest(".cam-ctrl")) return;
     if (freezeCtl.onTap(Date.now()) === "unfreeze") resume();
+  });
+
+  // Hide the freeze layers as soon as the discard transition finishes (the
+  // guard keeps unrelated transitions from hiding a live freeze; endDiscard
+  // is idempotent when both opacity and transform fire the event).
+  freeze.addEventListener("transitionend", () => {
+    if (freeze.classList.contains("discarding")) endDiscard();
   });
 
   camBtn.addEventListener("click", () => setCamera(!cameraOn));
