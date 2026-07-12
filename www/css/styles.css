@@ -312,7 +312,8 @@ body {
 }
 
 #options-close,
-#preview-close {
+#preview-close,
+#manage-db-close {
   font-size: 22px;
   background: none;
   border: none;
@@ -452,6 +453,41 @@ body {
   box-sizing: border-box;
   padding: 8px;
   margin: 10px 0 4px;
+}
+
+/* --- Manage database overlay --- */
+#manage-db {
+  z-index: 20;
+}
+
+.manage-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.manage-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.manage-text {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.manage-time {
+  font-size: 12px;
+  color: var(--timestamp-fg);
+  white-space: nowrap;
+}
+
+.manage-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 [hidden] {

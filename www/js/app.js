@@ -14,6 +14,7 @@ import { createBottomBar } from "./ui/bottom-bar.js";
 import { createScanner } from "./scanner.js";
 import { createCatalog } from "./catalog.js";
 import { createCatalogSection } from "./ui/catalog-section.js";
+import { createManageDb } from "./ui/manage-db.js";
 
 /** Initialize and start the application. */
 async function main() {
@@ -40,7 +41,7 @@ async function main() {
     getGroupMode: () => settings.get().groupMode,
   });
   const bottomBar = createBottomBar({ store });
-  createOptionsMenu({
+  const options = createOptionsMenu({
     store,
     settings,
     onSettingsChange: () => {
@@ -48,7 +49,20 @@ async function main() {
       scanner.refreshFreezeConfig();
     },
   });
-  createCatalogSection({ catalog, settings, onChange: render });
+  const catalogSection = createCatalogSection({
+    catalog,
+    settings,
+    onChange: render,
+  });
+  createManageDb({
+    store,
+    catalog,
+    onChange: () => {
+      render();
+      options.refreshStats();
+      catalogSection.refreshStats();
+    },
+  });
 
   /** Re-render all store-driven UI. */
   function render() {

@@ -17,10 +17,10 @@ import { createPreviewOverlay } from "./preview-overlay.js";
  * Create the catalog options section. Owns the "Catalog" group in the options
  * overlay: an entry-count readout, an "Import catalogs" button that lists the
  * remote .json files, a manual URL field that accepts either a directory
- * listing or a direct catalog file, the per-file load flow (fetch, validate,
- * resolve duplicate tokens via a batched confirm, persist), and a "Clear
- * catalog" action guarded by a confirmation prompt. Import results and
- * failures are reported via toasts instead of alerts.
+ * listing or a direct catalog file, and the per-file load flow (fetch,
+ * validate, resolve duplicate tokens via a batched confirm, persist). The
+ * "Clear catalog" action has moved to the Manage Database overlay. Import
+ * results and failures are reported via toasts instead of alerts.
  * @param {object} opts
  * @param {object} opts.catalog - The in-memory catalog model.
  * @param {object} opts.settings - The settings accessor (for the persisted import URL).
@@ -31,7 +31,6 @@ export function createCatalogSection({ catalog, settings, onChange }) {
   const importBtn = document.getElementById("catalog-import-btn");
   const statsEl = document.getElementById("catalog-stats");
   const filesEl = document.getElementById("catalog-files");
-  const clearBtn = document.getElementById("catalog-clear-btn");
   const urlInput = document.getElementById("catalog-url");
   const urlBtn = document.getElementById("catalog-url-btn");
   const preview = createPreviewOverlay();
@@ -205,12 +204,6 @@ export function createCatalogSection({ catalog, settings, onChange }) {
       });
     }
     urlBtn.disabled = false;
-  });
-  clearBtn.addEventListener("click", async () => {
-    if (!confirm("Delete all catalog entries? This cannot be undone.")) return;
-    await catalog.clear();
-    refreshStats();
-    onChange();
   });
   refreshStats();
   urlInput.value = settings.get().importUrl;

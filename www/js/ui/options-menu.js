@@ -8,13 +8,13 @@ import * as db from "../db.js";
  * Create the options-menu controller. Manages the overlay's open/close state
  * and wires the theme select, hide-duplicates toggle, list-entry grouping-mode
  * radios, camera viewport height slider, Scanner freeze radio+slider controls,
- * database stats, and the clear-database action (guarded by a confirmation
- * prompt).
+ * and database stats. The clear-database action has moved to the Manage
+ * Database overlay.
  * @param {object} opts
  * @param {object} opts.store - The store instance (Task 3).
  * @param {object} opts.settings - The settings instance (Task 4).
  * @param {() => void} opts.onSettingsChange - Called after any change so the app re-renders.
- * @returns {{open: () => void}}
+ * @returns {{open: () => void, refreshStats: () => Promise<void>}}
  */
 export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const overlay = document.getElementById("options");
@@ -29,7 +29,6 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const freezeAuto = document.getElementById("opt-freeze-auto");
   const groupRadios = overlay.querySelectorAll('input[name="group-mode"]');
   const stats = document.getElementById("db-stats");
-  const clearBtn = document.getElementById("clear-db-btn");
 
   setIcon(menuBtn, "menu");
   setIcon(closeBtn, "x");
@@ -119,12 +118,5 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
     onSettingsChange();
   });
 
-  clearBtn.addEventListener("click", async () => {
-    if (!confirm("Delete all scanned entries? This cannot be undone.")) return;
-    await store.clearAll();
-    await refreshStats();
-    onSettingsChange();
-  });
-
-  return { open };
+  return { open, refreshStats };
 }
