@@ -91,7 +91,7 @@ export function createStore(db) {
      * newest record per non-null group key; records whose group key is null are
      * ungrouped and always kept.
      * @param {boolean} hideDuplicates - Whether to collapse grouped duplicates.
-     * @param {"full"|"firstSuffix"|"secondToken"|"none"} groupMode - Grouping mode.
+     * @param {"full"|"firstToken"|"firstSuffix"|"secondToken"|"none"} groupMode - Grouping mode.
      * @returns {Array<{id:number, content:string, timestamp:number}>}
      */
     getVisible(hideDuplicates, groupMode) {
@@ -111,7 +111,7 @@ export function createStore(db) {
      * Count how many mirrored records share the group key of the given content
      * under a grouping mode. Ungrouped content (null key) always counts as 1.
      * @param {string} content - Content whose group to count.
-     * @param {"full"|"firstSuffix"|"secondToken"|"none"} groupMode - Grouping mode.
+     * @param {"full"|"firstToken"|"firstSuffix"|"secondToken"|"none"} groupMode - Grouping mode.
      * @returns {number} The number of records in the same group.
      */
     countFor(content, groupMode) {
