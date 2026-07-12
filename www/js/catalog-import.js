@@ -10,20 +10,57 @@ import { isValidToken } from "./util/catalog-match.js";
 export const CATALOG_BASE_URL = "https://srv346879.hstgr.cloud/app/data/";
 
 /**
- * Extract catalog file names from an nginx autoindex HTML page: every `href`
- * that ends in ".json" and names a file in this directory (no path separator).
- * @param {string} html - The directory listing HTML.
+ * Extract catalog file names from a directory listing. Handles common
+ * autoindex styles (nginx, Apache, lighttpd, Python http.server, Caddy):
+ * takes the basename of each href, strips query strings and fragments,
+ * URL-decodes the name, matches the ".json" extension case-insensitively,
+ * skips directory links, and de-duplicates. When the input contains no href
+ * attributes at all, falls back to scanning the plain text for
+ * whitespace-separated "*.json" tokens.
+ * @param {string} html - The directory listing (HTML or plain text).
  * @returns {string[]} The catalog file names.
  */
 export function parseListing(html) {
   const names = [];
-  const re = /href="([^"]+)"/gi;
+  const seen = new Set();
+  const add = (name) => {
+    if (name !== null && !seen.has(name)) {
+      seen.add(name);
+      names.push(name);
+    }
+  };
+  const re = /href\s*=\s*(?:"([^"]*)"|'([^']*)')/gi;
+  let sawHref = false;
   let m;
   while ((m = re.exec(html)) !== null) {
-    const href = m[1];
-    if (href.endsWith(".json") && !href.includes("/")) names.push(href);
+    sawHref = true;
+    add(fileNameFromHref(m[1] ?? m[2]));
+  }
+  if (!sawHref) {
+    for (const token of html.split(/\s+/)) add(fileNameFromHref(token));
   }
   return names;
+}
+
+/**
+ * Reduce an href (or bare token) to a catalog file name: strip query string
+ * and fragment, reject directory links, take the last path segment, and
+ * URL-decode it. Returns null unless the result ends in ".json"
+ * (case-insensitive).
+ * @param {string} href - The href value or plain-text token.
+ * @returns {string|null} The decoded file name, or null if not a catalog file.
+ */
+function fileNameFromHref(href) {
+  const path = href.split(/[?#]/)[0];
+  if (path === "" || path.endsWith("/")) return null;
+  const segment = path.split("/").pop();
+  let name;
+  try {
+    name = decodeURIComponent(segment);
+  } catch {
+    name = segment;
+  }
+  return /\.json$/i.test(name) ? name : null;
 }
 
 /**

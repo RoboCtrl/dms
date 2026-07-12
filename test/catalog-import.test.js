@@ -82,3 +82,43 @@ test("mergeEntries keeps existing conflicts but adds new tokens", () => {
     { token: "C", text: "add" },
   ]);
 });
+
+test("parseListing takes the basename of path hrefs", () => {
+  assert.deepEqual(parseListing('<a href="/data/foo.json">foo.json</a>'), [
+    "foo.json",
+  ]);
+});
+
+test("parseListing strips query strings and fragments", () => {
+  const html =
+    '<a href="?C=N;O=D">Name</a> <a href="bar.json?v=2#top">bar.json</a>';
+  assert.deepEqual(parseListing(html), ["bar.json"]);
+});
+
+test("parseListing decodes URL-encoded names", () => {
+  assert.deepEqual(parseListing('<a href="my%20set.json">my set</a>'), [
+    "my set.json",
+  ]);
+});
+
+test("parseListing matches the extension case-insensitively", () => {
+  assert.deepEqual(parseListing('<a href="UPPER.JSON">u</a>'), ["UPPER.JSON"]);
+});
+
+test("parseListing accepts single-quoted hrefs", () => {
+  assert.deepEqual(parseListing("<a href='c.json'>c</a>"), ["c.json"]);
+});
+
+test("parseListing skips directory links and de-duplicates", () => {
+  const html =
+    '<a href="../">..</a><a href="sub/">sub</a>' +
+    '<a href="a.json">a</a><a href="a.json">a</a>';
+  assert.deepEqual(parseListing(html), ["a.json"]);
+});
+
+test("parseListing falls back to plain-text tokens when no hrefs", () => {
+  assert.deepEqual(parseListing("a.json\nreadme.txt b.json"), [
+    "a.json",
+    "b.json",
+  ]);
+});
