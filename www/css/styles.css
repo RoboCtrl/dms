@@ -447,6 +447,13 @@ body {
   font-size: 13px;
 }
 
+#catalog-url {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  margin: 10px 0 4px;
+}
+
 [hidden] {
   display: none !important;
 }

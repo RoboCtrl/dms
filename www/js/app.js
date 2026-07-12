@@ -48,7 +48,7 @@ async function main() {
       scanner.refreshFreezeConfig();
     },
   });
-  createCatalogSection({ catalog, onChange: render });
+  createCatalogSection({ catalog, settings, onChange: render });
 
   /** Re-render all store-driven UI. */
   function render() {

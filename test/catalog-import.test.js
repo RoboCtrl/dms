@@ -8,6 +8,9 @@ import {
   validateCatalog,
   findConflicts,
   mergeEntries,
+  classifyImportBody,
+  listingBaseUrl,
+  urlDisplayName,
 } from "../www/js/catalog-import.js";
 
 const LISTING = `<html><body><pre>
@@ -130,4 +133,32 @@ test("fetchText returns the body; throws on HTTP error", async () => {
     fetchText("u", fetchStub("", false, 404)),
     /HTTP 404/,
   );
+});
+
+test("classifyImportBody: JSON object body is a catalog", () => {
+  assert.deepEqual(classifyImportBody('{"A":{"rn":1}}'), {
+    kind: "catalog",
+    json: { A: { rn: 1 } },
+  });
+});
+
+test("classifyImportBody: non-object JSON falls through to listing", () => {
+  assert.deepEqual(classifyImportBody("123"), { kind: "listing", files: [] });
+});
+
+test("classifyImportBody: HTML body is a listing", () => {
+  assert.deepEqual(classifyImportBody(LISTING), {
+    kind: "listing",
+    files: ["series_29.json"],
+  });
+});
+
+test("listingBaseUrl ensures a trailing slash", () => {
+  assert.equal(listingBaseUrl("https://x.org/data"), "https://x.org/data/");
+  assert.equal(listingBaseUrl("https://x.org/data/"), "https://x.org/data/");
+});
+
+test("urlDisplayName returns the decoded last path segment", () => {
+  assert.equal(urlDisplayName("https://x.org/a/set%201.json?v=2"), "set 1.json");
+  assert.equal(urlDisplayName("https://x.org/"), "x.org");
 });

@@ -14,6 +14,7 @@ const DEFAULTS = {
   freezeTimer: 1,
   freezeTapDelay: 2,
   freezeAutoDelay: 2,
+  importUrl: "",
 };
 
 /**
@@ -25,7 +26,7 @@ export function createSettings(storage = localStorage) {
   /**
    * Read settings, merging stored values over defaults. Malformed JSON falls
    * back to defaults.
-   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number}}
+   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number, importUrl:string}}
    */
   function get() {
     try {
@@ -39,7 +40,7 @@ export function createSettings(storage = localStorage) {
 
   /**
    * Persist a partial update merged over current settings.
-   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number}>} patch
+   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number, importUrl:string}>} patch
    */
   function update(patch) {
     storage.setItem(KEY, JSON.stringify({ ...get(), ...patch }));
@@ -109,6 +110,13 @@ export function createSettings(storage = localStorage) {
      */
     setFreezeAutoDelay(index) {
       update({ freezeAutoDelay: index });
+    },
+    /**
+     * Set and persist the last manually entered catalog import URL.
+     * @param {string} value - The URL, or an empty string.
+     */
+    setImportUrl(value) {
+      update({ importUrl: value });
     },
   };
 }

@@ -181,3 +181,47 @@ export function mergeEntries(existing, incoming, replaceConflicts) {
   const additions = incoming.filter((e) => !existingTokens.has(e.token));
   return [...existing, ...additions];
 }
+
+/**
+ * Interpret a body fetched from a manually entered URL. A body that parses
+ * as a JSON object is a catalog file; anything else is treated as a
+ * directory listing and scanned for catalog file names.
+ * @param {string} text - The fetched response body.
+ * @returns {{kind:"catalog", json:object} | {kind:"listing", files:string[]}}
+ */
+export function classifyImportBody(text) {
+  try {
+    const json = JSON.parse(text);
+    if (json !== null && typeof json === "object" && !Array.isArray(json)) {
+      return { kind: "catalog", json };
+    }
+  } catch {
+    // Not JSON; fall through to listing detection.
+  }
+  return { kind: "listing", files: parseListing(text) };
+}
+
+/**
+ * Normalize a directory URL so file names can be appended to it.
+ * @param {string} url - The directory URL as entered by the user.
+ * @returns {string} The URL with a trailing slash.
+ */
+export function listingBaseUrl(url) {
+  return url.endsWith("/") ? url : url + "/";
+}
+
+/**
+ * Derive a short display name from a URL: the decoded last non-empty path
+ * segment (query string and fragment ignored), falling back to the host.
+ * @param {string} url - The URL.
+ * @returns {string} The display name.
+ */
+export function urlDisplayName(url) {
+  const path = url.split(/[?#]/)[0];
+  const segment = path.split("/").filter((s) => s !== "").pop() ?? url;
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}

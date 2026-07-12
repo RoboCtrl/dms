@@ -23,6 +23,7 @@ test("defaults to dark theme, hidden duplicates, first-token grouping", () => {
     freezeTimer: 1,
     freezeTapDelay: 2,
     freezeAutoDelay: 2,
+    importUrl: "",
   });
 });
 
@@ -42,6 +43,7 @@ test("persists theme and hideDuplicates across instances", () => {
     freezeTimer: 1,
     freezeTapDelay: 2,
     freezeAutoDelay: 2,
+    importUrl: "",
   });
 });
 
@@ -104,4 +106,13 @@ test("setGroupMode persists across instances", () => {
   s1.setGroupMode("secondToken");
   const s2 = createSettings(storage);
   assert.equal(s2.get().groupMode, "secondToken");
+});
+
+test("importUrl defaults to empty and persists across instances", () => {
+  const storage = fakeStorage();
+  const s1 = createSettings(storage);
+  assert.equal(s1.get().importUrl, "");
+  s1.setImportUrl("https://example.org/catalogs/");
+  const s2 = createSettings(storage);
+  assert.equal(s2.get().importUrl, "https://example.org/catalogs/");
 });
