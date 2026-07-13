@@ -14,6 +14,8 @@ const DEFAULTS = {
   freezeTimer: 1,
   freezeTapDelay: 2,
   freezeAutoDelay: 2,
+  discardAnimation: true,
+  discardDuration: 1,
   importUrl: "",
 };
 
@@ -26,7 +28,7 @@ export function createSettings(storage = localStorage) {
   /**
    * Read settings, merging stored values over defaults. Malformed JSON falls
    * back to defaults.
-   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number, importUrl:string}}
+   * @returns {{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number, discardAnimation:boolean, discardDuration:number, importUrl:string}}
    */
   function get() {
     try {
@@ -40,7 +42,7 @@ export function createSettings(storage = localStorage) {
 
   /**
    * Persist a partial update merged over current settings.
-   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number, importUrl:string}>} patch
+   * @param {Partial<{theme:"dark"|"light", hideDuplicates:boolean, cameraOn:boolean, cameraHeight:number, freezeMode:"tap"|"timer"|"auto", freezeTimer:number, freezeTapDelay:number, freezeAutoDelay:number, discardAnimation:boolean, discardDuration:number, importUrl:string}>} patch
    */
   function update(patch) {
     storage.setItem(KEY, JSON.stringify({ ...get(), ...patch }));
@@ -110,6 +112,20 @@ export function createSettings(storage = localStorage) {
      */
     setFreezeAutoDelay(index) {
       update({ freezeAutoDelay: index });
+    },
+    /**
+     * Set and persist whether the discard (fade-off) animation plays.
+     * @param {boolean} value
+     */
+    setDiscardAnimation(value) {
+      update({ discardAnimation: value });
+    },
+    /**
+     * Set and persist the discard-animation duration preset index.
+     * @param {number} index - Index into the discard-duration presets.
+     */
+    setDiscardDuration(index) {
+      update({ discardDuration: index });
     },
     /**
      * Set and persist the last manually entered catalog import URL.

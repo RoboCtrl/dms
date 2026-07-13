@@ -23,6 +23,8 @@ test("defaults to dark theme, hidden duplicates, first-token grouping", () => {
     freezeTimer: 1,
     freezeTapDelay: 2,
     freezeAutoDelay: 2,
+    discardAnimation: true,
+    discardDuration: 1,
     importUrl: "",
   });
 });
@@ -43,6 +45,8 @@ test("persists theme and hideDuplicates across instances", () => {
     freezeTimer: 1,
     freezeTapDelay: 2,
     freezeAutoDelay: 2,
+    discardAnimation: true,
+    discardDuration: 1,
     importUrl: "",
   });
 });
@@ -115,4 +119,22 @@ test("importUrl defaults to empty and persists across instances", () => {
   s1.setImportUrl("https://example.org/catalogs/");
   const s2 = createSettings(storage);
   assert.equal(s2.get().importUrl, "https://example.org/catalogs/");
+});
+
+test("discard animation defaults: enabled, duration index 1", () => {
+  const s = createSettings(fakeStorage());
+  const g = s.get();
+  assert.equal(g.discardAnimation, true);
+  assert.equal(g.discardDuration, 1);
+});
+
+test("discard setters persist across instances", () => {
+  const storage = fakeStorage();
+  const s1 = createSettings(storage);
+  s1.setDiscardAnimation(false);
+  s1.setDiscardDuration(3);
+  const s2 = createSettings(storage);
+  const g = s2.get();
+  assert.equal(g.discardAnimation, false);
+  assert.equal(g.discardDuration, 3);
 });
