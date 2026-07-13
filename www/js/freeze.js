@@ -3,11 +3,12 @@
  * settings→config resolver.
  *
  * The options panel exposes one radio per freeze mode, each paired with a
- * 4-position slider. Each slider position maps to one of the second-values
- * below; settings persist the chosen index (like camera-height). This module
- * is pure (no DOM) so both the scanner and the options menu — and the unit
- * tests — share one source of truth. Index 0 is the longest duration so the
- * leftmost slider position is the longest, per the design.
+ * 4-position slider. For the freeze sliders, each slider position maps to one
+ * of the second-values below, with index 0 being the longest duration so the
+ * leftmost slider position is the longest, per the design. The discard-animation
+ * duration presets are in milliseconds, shortest first. Settings persist the
+ * chosen index (like camera-height). This module is pure (no DOM) so both the
+ * scanner and the options menu — and the unit tests — share one source of truth.
  */
 
 /** @type {number[]} Timer-mode durations in seconds, longest first. */
