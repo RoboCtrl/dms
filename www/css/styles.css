@@ -72,17 +72,31 @@ body {
 }
 
 /* Discard animation: the freeze layers shrink slightly towards the detected
-   code (transform-origin set inline by scanner.js) and fade out over 800ms.
-   The transition lives on .discarding only, so removing the class mid-flight
-   snaps the layers back to full scale/opacity instantly — used when a new
-   freeze interrupts a running discard. */
+   code (transform-origin set inline by scanner.js), slide down until the code
+   center reaches the panel's bottom edge (--discard-shift, set inline at draw
+   time), and fade out. The frame itself additionally darkens to 50%
+   brightness. Durations come from --discard-ms (set inline from settings on
+   discard). Fade and darken are linear; the transform (slide + shrink) uses a
+   mild ease-in so the movement accelerates slightly. translateY comes before
+   scale so the shift is not scaled down by the shrink. The transition lives
+   on .discarding only, so removing the class mid-flight snaps the layers
+   back instantly — used when a new freeze interrupts a running discard. */
 #freeze.discarding,
 #overlay.discarding {
   opacity: 0;
-  transform: scale(0.85);
+  transform: translateY(var(--discard-shift, 0px)) scale(0.85);
   transition:
-    opacity 800ms ease-out,
-    transform 800ms ease-out;
+    opacity var(--discard-ms, 800ms) linear,
+    transform var(--discard-ms, 800ms) cubic-bezier(0.4, 0, 0.8, 0.6);
+}
+
+/* Only the frozen frame darkens; the highlight polygon keeps its color. */
+#freeze.discarding {
+  filter: brightness(0.5);
+  transition:
+    opacity var(--discard-ms, 800ms) linear,
+    filter var(--discard-ms, 800ms) linear,
+    transform var(--discard-ms, 800ms) cubic-bezier(0.4, 0, 0.8, 0.6);
 }
 
 #scan-content {

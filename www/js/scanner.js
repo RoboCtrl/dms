@@ -6,10 +6,10 @@
  * area is scanned. Keeps the stream running after a recognition (pausing only
  * result *processing*), overlays the frozen frame through a radial alpha mask
  * centered on the detected code (opaque at the code, transparent towards the
- * edges) with a highlight polygon, discards it with an 800ms shrink-and-fade
- * animation, shows the placement reticle while scanning, and throttles
- * duplicate recordings via a cooldown gate. Emits recognised content via the
- * onRecognized callback.
+ * edges) with a highlight polygon, discards it with a configurable darken,
+ * slide-down, shrink, and fade animation, shows the placement reticle while
+ * scanning, and throttles duplicate recordings via a cooldown gate. Emits
+ * recognised content via the onRecognized callback.
  *
  * Freeze lifecycle (when to freeze, when to unfreeze, tap-to-continue hint)
  * is delegated to freeze-controller.js; the resume trigger depends on the
@@ -58,9 +58,9 @@ export function createScanner({ onRecognized, settings }) {
   const RETICLE_FRACTION = 0.6;
   const RETICLE_PAD = 8;
 
-  // Fallback delay (ms) before force-hiding the freeze layers if the 800ms
-  // discard transition's transitionend event never fires.
-  const DISCARD_FALLBACK_MS = 850;
+  // Slack (ms) added to the configured discard duration for the fallback
+  // timer that force-hides the freeze layers if transitionend never fires.
+  const DISCARD_FALLBACK_SLACK_MS = 50;
 
   // Reused offscreen canvas the cropped frame is drawn onto before decoding.
   const capture = document.createElement("canvas");
@@ -132,9 +132,10 @@ export function createScanner({ onRecognized, settings }) {
    * on the detected code — opaque at the code, fully transparent at 2/3 of
    * the distance to the farthest visible corner — so the live feed shows
    * through towards the edges. The overlay polygon stays full opacity. Also
-   * cancels any discard animation still in flight (a re-freeze interrupts it)
-   * and records the mask center as the transform-origin both layers shrink
-   * towards when discarded.
+   * cancels any discard animation still in flight (a re-freeze interrupts it),
+   * records the mask center as the transform-origin both layers shrink
+   * towards when discarded, and records the downward travel (--discard-shift)
+   * the layers slide on discard.
    * @param {Array<{getX:()=>number,getY:()=>number}>} points - ZXing result points (video-pixel coords).
    */
   function drawFreeze(points) {
@@ -156,6 +157,9 @@ export function createScanner({ onRecognized, settings }) {
     });
     freeze.style.transformOrigin = `${mask.originX}px ${mask.originY}px`;
     overlay.style.transformOrigin = `${mask.originX}px ${mask.originY}px`;
+    const shift = Math.max(0, panel.clientHeight - mask.originY);
+    freeze.style.setProperty("--discard-shift", `${shift}px`);
+    overlay.style.setProperty("--discard-shift", `${shift}px`);
 
     const fctx = freeze.getContext("2d");
     fctx.drawImage(video, 0, 0, w, h);
@@ -183,20 +187,28 @@ export function createScanner({ onRecognized, settings }) {
   }
 
   /**
-   * Discard the frozen overlay with the 800ms shrink-and-fade animation and
-   * resume processing (the camera never stopped). The decoded-text bar and
-   * tap hint hide immediately; the freeze/overlay canvases are hidden once
-   * the CSS transition ends, with a timeout fallback in case transitionend
-   * never fires.
+   * Discard the frozen overlay and resume processing (the camera never
+   * stopped). The decoded-text bar and tap hint hide immediately. When the
+   * fade-off animation is enabled, the freeze/overlay layers darken, slide
+   * down, shrink, and fade over the configured duration (via --discard-ms)
+   * and are hidden once the CSS transition ends, with a timeout fallback in
+   * case transitionend never fires; when disabled they hide instantly.
    */
   function resume() {
     if (!frozen) return;
     frozen = false;
     content.hidden = true;
     tapHint.hidden = true;
+    const { discardAnimation, discardMs } = freezeConfigFromSettings(settings.get());
+    if (!discardAnimation) {
+      endDiscard();
+      return;
+    }
+    freeze.style.setProperty("--discard-ms", `${discardMs}ms`);
+    overlay.style.setProperty("--discard-ms", `${discardMs}ms`);
     freeze.classList.add("discarding");
     overlay.classList.add("discarding");
-    discardTimer = setTimeout(endDiscard, DISCARD_FALLBACK_MS);
+    discardTimer = setTimeout(endDiscard, discardMs + DISCARD_FALLBACK_SLACK_MS);
   }
 
   /**
