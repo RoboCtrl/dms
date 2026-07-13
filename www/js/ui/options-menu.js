@@ -8,8 +8,8 @@ import * as db from "../db.js";
  * Create the options-menu controller. Manages the overlay's open/close state
  * and wires the theme select, hide-duplicates toggle, list-entry grouping-mode
  * radios, camera viewport height slider, Scanner freeze radio+slider controls,
- * and database stats. The clear-database action has moved to the Manage
- * Database overlay.
+ * fade-off animation toggle, animation duration slider, and database stats.
+ * The clear-database action has moved to the Manage Database overlay.
  * @param {object} opts
  * @param {object} opts.store - The store instance (Task 3).
  * @param {object} opts.settings - The settings instance (Task 4).
@@ -27,6 +27,8 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const freezeTimer = document.getElementById("opt-freeze-timer");
   const freezeTap = document.getElementById("opt-freeze-tap");
   const freezeAuto = document.getElementById("opt-freeze-auto");
+  const discardAnim = document.getElementById("opt-discard-anim");
+  const discardDuration = document.getElementById("opt-discard-duration");
   const groupRadios = overlay.querySelectorAll('input[name="group-mode"]');
   const stats = document.getElementById("db-stats");
 
@@ -51,6 +53,8 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
     freezeTimer.value = String(s.freezeTimer);
     freezeTap.value = String(s.freezeTapDelay);
     freezeAuto.value = String(s.freezeAutoDelay);
+    discardAnim.checked = s.discardAnimation;
+    discardDuration.value = String(s.discardDuration);
     for (const radio of groupRadios) {
       radio.checked = radio.value === s.groupMode;
     }
@@ -115,6 +119,16 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
 
   freezeAuto.addEventListener("input", () => {
     settings.setFreezeAutoDelay(Number(freezeAuto.value));
+    onSettingsChange();
+  });
+
+  discardAnim.addEventListener("change", () => {
+    settings.setDiscardAnimation(discardAnim.checked);
+    onSettingsChange();
+  });
+
+  discardDuration.addEventListener("input", () => {
+    settings.setDiscardDuration(Number(discardDuration.value));
     onSettingsChange();
   });
 
