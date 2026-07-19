@@ -29,7 +29,7 @@ import { createPreviewOverlay } from "./preview-overlay.js";
  */
 export function createCatalogSection({ catalog, settings, onChange }) {
   const importBtn = document.getElementById("catalog-import-btn");
-  const statsEl = document.getElementById("catalog-stats");
+  const statsEl = document.getElementById("db-catalog-stats");
   const filesEl = document.getElementById("catalog-files");
   const urlInput = document.getElementById("catalog-url");
   const urlBtn = document.getElementById("catalog-url-btn");
@@ -37,7 +37,7 @@ export function createCatalogSection({ catalog, settings, onChange }) {
 
   /** Update the catalog entry-count readout. */
   function refreshStats() {
-    statsEl.textContent = `${catalog.getEntries().length} entries`;
+    statsEl.textContent = `${catalog.getEntries().length} catalog entries`;
   }
 
   /**

@@ -30,15 +30,17 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const discardAnim = document.getElementById("opt-discard-anim");
   const discardDuration = document.getElementById("opt-discard-duration");
   const groupRadios = overlay.querySelectorAll('input[name="group-mode"]');
-  const stats = document.getElementById("db-stats");
+  const listStats = document.getElementById("db-list-stats");
+  const sizeStats = document.getElementById("db-size-stats");
 
   setIcon(menuBtn, "menu");
   setIcon(closeBtn, "x");
 
-  /** Refresh the database entry-count and size readout. */
+  /** Refresh the list-entry count and storage-size readouts. */
   async function refreshStats() {
     const { count, bytes } = await db.estimateSize();
-    stats.textContent = `${count} entries · ${formatBytes(bytes)}`;
+    listStats.textContent = `${count} list entries`;
+    sizeStats.textContent = `${formatBytes(bytes)} storage size`;
   }
 
   /** Open the overlay, syncing controls to current settings + stats. */
