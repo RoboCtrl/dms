@@ -154,15 +154,8 @@
           <p id="db-catalog-stats">0 catalog entries</p>
           <p id="db-size-stats">0 kB storage size</p>
           <button id="manage-db-btn">Manage database</button>
-          <button id="load-url-btn" hidden>Load from URL ...</button>
+          <button id="load-url-btn">Load from URL ...</button>
           <button id="catalog-import-btn">Import catalogs</button>
-          <input
-            id="catalog-url"
-            type="url"
-            placeholder="https://example.com/catalogs/"
-            aria-label="Catalog import URL"
-          />
-          <button id="catalog-url-btn">Load from URL</button>
           <div id="catalog-files" hidden></div>
         </section>
 
@@ -187,6 +180,28 @@
           <input id="preview-formatted" type="checkbox" checked />
         </label>
         <pre id="preview-content"></pre>
+      </div>
+    </div>
+
+    <!-- Load-from-URL overlay (stacks above the options overlay) -->
+    <div id="load-url" class="overlay" hidden>
+      <div class="options-panel" role="dialog" aria-modal="true">
+        <div class="options-header">
+          <h2>Load from URL</h2>
+          <button id="load-url-close" aria-label="Close"></button>
+        </div>
+        <input
+          id="load-url-input"
+          type="url"
+          placeholder="https://example.com/catalogs/"
+          aria-label="Catalog import URL"
+        />
+        <div class="load-url-actions">
+          <button id="load-url-cancel">Cancel</button>
+          <button id="load-url-preview">Preview</button>
+          <button id="load-url-load">Load</button>
+        </div>
+        <div id="load-url-files" hidden></div>
       </div>
     </div>
 

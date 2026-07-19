@@ -337,7 +337,8 @@ body {
 
 #options-close,
 #preview-close,
-#manage-db-close {
+#manage-db-close,
+#load-url-close {
   font-size: 22px;
   background: none;
   border: none;
@@ -477,11 +478,22 @@ body {
   font-size: 13px;
 }
 
-#catalog-url {
+#load-url-input {
   width: 100%;
   box-sizing: border-box;
   padding: 8px;
   margin: 10px 0 4px;
+}
+
+/* --- Load-from-URL overlay --- */
+#load-url {
+  z-index: 15;
+}
+
+.load-url-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 /* --- Manage database overlay --- */
