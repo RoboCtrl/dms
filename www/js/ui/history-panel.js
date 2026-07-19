@@ -45,18 +45,19 @@ export function createHistoryPanel({ root, store, catalog, getHideDuplicates, ge
       // A catalog token matched: show its text in place of the scanned content.
       content.textContent = display;
     } else {
-      // Render segments: only the special-format alphanumeric token is bold.
+      // Render segments: bold first token, accent-colored last two chars.
+      // Segments carry their own spacing, so no separators are inserted.
       const segments = segmentContent(rec.content);
-      segments.forEach((seg, i) => {
-        if (i > 0) content.appendChild(document.createTextNode(" "));
-        if (seg.bold) {
-          const strong = document.createElement("strong");
-          strong.textContent = seg.text;
-          content.appendChild(strong);
-        } else {
+      for (const seg of segments) {
+        if (!seg.bold && !seg.accent) {
           content.appendChild(document.createTextNode(seg.text));
+          continue;
         }
-      });
+        const part = document.createElement(seg.bold ? "strong" : "span");
+        if (seg.accent) part.classList.add("tok-accent");
+        part.textContent = seg.text;
+        content.appendChild(part);
+      }
     }
 
     const ts = document.createElement("span");

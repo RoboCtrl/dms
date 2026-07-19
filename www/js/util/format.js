@@ -37,20 +37,26 @@ export function formatBytes(bytes) {
 
 /**
  * Split scanned content into display segments. When the content matches the
- * special format "<integer> <alphanumeric> <integer> <integer>", the four
- * tokens are returned with only the second (alphanumeric) token marked bold;
- * any other content is returned as a single non-bold segment.
+ * special format "<integer> <alphanumeric> <integer> <integer>", the first
+ * token is marked bold and its last two characters (the whole token when it
+ * has two characters or fewer) are additionally marked for accent coloring;
+ * the remaining tokens follow as one plain segment. Any other content is
+ * returned as a single plain segment. Concatenating the segment texts yields
+ * the full display string — segments carry their own spacing.
  * @param {string} content - The scanned content.
- * @returns {Array<{text:string, bold:boolean}>} Ordered display segments.
+ * @returns {Array<{text:string, bold:boolean, accent:boolean}>} Ordered display segments.
  */
 export function segmentContent(content) {
   const special = /^(\d+)\s+([A-Za-z0-9]+)\s+([0-9]+)\s+([0-9]+)$/;
   const m = content.match(special);
-  if (!m) return [{ text: content, bold: false }];
-  return [
-    { text: m[1], bold: false },
-    { text: m[2], bold: true },
-    { text: m[3], bold: false },
-    { text: m[4], bold: false },
-  ];
+  if (!m) return [{ text: content, bold: false, accent: false }];
+  const first = m[1];
+  const split = Math.max(first.length - 2, 0);
+  const segments = [];
+  if (split > 0) {
+    segments.push({ text: first.slice(0, split), bold: true, accent: false });
+  }
+  segments.push({ text: first.slice(split), bold: true, accent: true });
+  segments.push({ text: ` ${m[2]} ${m[3]} ${m[4]}`, bold: false, accent: false });
+  return segments;
 }

@@ -401,6 +401,11 @@ body {
   margin: 8px 0;
 }
 
+/* Accent-colored suffix of the first token in unmatched history entries. */
+.tok-accent {
+  color: var(--accent);
+}
+
 /* --- Catalog import file list --- */
 .catalog-file {
   display: flex;

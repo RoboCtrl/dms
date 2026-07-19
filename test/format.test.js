@@ -17,29 +17,38 @@ test("formatBytes uses MB at or above 1 MB", () => {
   assert.equal(formatBytes(1_400_000), "1.4 MB");
 });
 
-test("segmentContent bolds only the 2nd token for the special format", () => {
+test("segmentContent bolds the 1st token and accents its last two chars", () => {
+  assert.deepEqual(segmentContent("123 AB3X 45 6"), [
+    { text: "1", bold: true, accent: false },
+    { text: "23", bold: true, accent: true },
+    { text: " AB3X 45 6", bold: false, accent: false },
+  ]);
+});
+
+test("segmentContent accents the whole 1st token when it has 2 chars or fewer", () => {
   assert.deepEqual(segmentContent("12 AB3X 45 6"), [
-    { text: "12", bold: false },
-    { text: "AB3X", bold: true },
-    { text: "45", bold: false },
-    { text: "6", bold: false },
+    { text: "12", bold: true, accent: true },
+    { text: " AB3X 45 6", bold: false, accent: false },
+  ]);
+  assert.deepEqual(segmentContent("1 AB 2 3"), [
+    { text: "1", bold: true, accent: true },
+    { text: " AB 2 3", bold: false, accent: false },
   ]);
 });
 
-test("segmentContent tolerates extra whitespace between tokens", () => {
-  assert.deepEqual(segmentContent("12   AB3X  45 6"), [
-    { text: "12", bold: false },
-    { text: "AB3X", bold: true },
-    { text: "45", bold: false },
-    { text: "6", bold: false },
+test("segmentContent normalizes whitespace between tokens", () => {
+  assert.deepEqual(segmentContent("123   AB3X  45 6"), [
+    { text: "1", bold: true, accent: false },
+    { text: "23", bold: true, accent: true },
+    { text: " AB3X 45 6", bold: false, accent: false },
   ]);
 });
 
-test("segmentContent returns one normal segment for non-matching content", () => {
+test("segmentContent returns one plain segment for non-matching content", () => {
   assert.deepEqual(segmentContent("hello world"), [
-    { text: "hello world", bold: false },
+    { text: "hello world", bold: false, accent: false },
   ]);
   assert.deepEqual(segmentContent("12 AB 45"), [
-    { text: "12 AB 45", bold: false },
+    { text: "12 AB 45", bold: false, accent: false },
   ]);
 });
