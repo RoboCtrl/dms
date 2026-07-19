@@ -39,8 +39,11 @@ Contents, top to bottom:
 
 - **Cancel**, the ✕ button, and a backdrop tap all close the popup with no
   further action.
-- **Preview** fetches the URL as text and opens the existing preview overlay
-  (raw/formatted JSON view) stacked on top. Errors surface as error toasts.
+- **Preview** fetches the URL as text and classifies it: a direct catalog
+  file opens the existing preview overlay (raw/formatted JSON view) stacked
+  on top; a directory listing renders the checkbox file list inside the
+  popup (each file has its own `Preview` button), without persisting the
+  URL. Errors surface as error toasts.
 - **Load** keeps today's classify logic (`classifyImportBody`):
   - Direct catalog file → validate, resolve duplicate-token conflicts via the
     batched confirm, import, persist the URL, show success toast, close the
