@@ -2,7 +2,7 @@
  * Service worker providing an offline app shell. Caches core assets on install
  * and serves cache-first with a network fallback.
  */
-const CACHE = "dms-v12";
+const CACHE = "dms-v13";
 const ASSETS = [
   ".",
   "index.html",
