@@ -531,6 +531,35 @@ body {
   margin-top: 8px;
 }
 
+.db-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.manage-sep {
+  border: none;
+  border-top: 1px solid #80808044;
+  margin: 16px 0 12px;
+}
+
+.manual-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.manual-row input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+
+#manual-entries-limit {
+  font-size: 12px;
+  color: var(--timestamp-fg);
+}
+
 [hidden] {
   display: none !important;
 }

@@ -153,9 +153,11 @@
           <p id="db-list-stats">0 list entries</p>
           <p id="db-catalog-stats">0 catalog entries</p>
           <p id="db-size-stats">0 kB storage size</p>
-          <button id="manage-db-btn">Manage database</button>
-          <button id="load-url-btn">Load from URL ...</button>
-          <button id="catalog-import-btn">Import catalogs</button>
+          <div class="db-actions">
+            <button id="manage-db-btn">Manage database</button>
+            <button id="load-url-btn">Load from URL ...</button>
+            <button id="catalog-import-btn">Import catalogs</button>
+          </div>
           <div id="catalog-files" hidden></div>
         </section>
 
@@ -229,6 +231,13 @@
             <button id="manage-catalog-delete">Delete selected</button>
             <button id="manage-catalog-clear">Clear all</button>
           </div>
+
+          <hr class="manage-sep" />
+          <div id="manual-entries"></div>
+          <p id="manual-entries-limit" hidden>
+            Entry limit reached — add these entries first.
+          </p>
+          <button id="manual-entries-add">Add entries</button>
         </section>
       </div>
     </div>

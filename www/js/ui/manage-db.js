@@ -6,6 +6,7 @@
  */
 import { formatTimestamp } from "../util/format.js";
 import { setIcon } from "../util/icon.js";
+import { createManualEntries } from "./manual-entries.js";
 
 /**
  * Create the Manage Database controller. Wires the #manage-db-btn opener in
@@ -98,10 +99,13 @@ export function createManageDb({ store, catalog, onChange }) {
     onChange();
   }
 
-  /** Open the overlay with freshly rendered lists. */
+  const manualEntries = createManualEntries({ catalog, onChange: refresh });
+
+  /** Open the overlay with freshly rendered lists and an empty manual editor. */
   function open() {
     renderScans();
     renderCatalog();
+    manualEntries.reset();
     overlay.hidden = false;
   }
 

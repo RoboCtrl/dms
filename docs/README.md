@@ -51,6 +51,7 @@ All runtime code lives in `www/`. Pure logic is kept in `www/js/util/` so it can
 | `catalog-section.js` | Catalog controls inside the options panel (import URL, load, merge). |
 | `preview-overlay.js` | Shows a fetched catalog file as formatted JSON or raw text, surfacing parse and validation errors. |
 | `manage-db.js` | Manage Database overlay: per-row checkboxes for scans and catalog entries, delete selected, confirm-guarded clear-all. |
+| `manual-entries.js` | Manual catalog-entry rows in the Manage Database overlay: growing token/display-text pairs, added to the catalog with `rn: -1`. |
 | `bottom-bar.js` | Undo footer, visible only while an undo is available. |
 | `toast.js` | Single-slot snackbar notifications (success 3.5 s, error 6 s). |
 
@@ -64,6 +65,7 @@ All runtime code lives in `www/`. Pure logic is kept in `www/js/util/` so it can
 | `freeze-controller.js` | Pure freeze-lifecycle state machine; all timing via an injected `now`. |
 | `freeze-mask.js` | Geometry for the radial freeze mask and its discard animation (centre, radius, transform origin). |
 | `scan-gate.js` | Same-content cooldown gate so a held code is not recorded many times per second. |
+| `manual-catalog.js` | Builds catalog records from manual row input and merges them into the existing entries (same token overwrites). |
 | `format.js` | Timestamp and byte-size formatting. |
 | `icon.js` | Inline Lucide icons as `currentColor` SVG strings — no web font, no runtime fetch. |
 
