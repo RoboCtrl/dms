@@ -7,7 +7,32 @@ Everything happens on your phone. There is no account, no login, and nothing is
 uploaded anywhere — your scan list lives in your browser's own storage and stays
 there until you delete it. Once loaded, the app also works offline.
 
+Note, that if the app is run in an incognito/private tab, the data is lost when
+the tab is closed, which is considered intended behaviour.
+
 **Live app:** <https://srv346879.hstgr.cloud/app/>
+
+<img src="docs/Screenshot_main_screen.png" width="336" alt="Screenshot of the main screen">
+![Video of scanning minifigure packages](docs/example.mp4)
+
+## Motivation
+
+This app was developed after a scanner app intended to identify the content of
+LEGO minifigure packages stopped working because no updates for new minifigure
+codes was provided by the developer.
+
+This app is designed to work even if no updates are available by:
+- Identifying duplicates
+- Allowing to add your own code entries if none are provided
+
+Key design features also include:
+- Standalone app - no account, login, install required. Just a standalone
+  webpage utilizing internal storage.
+- No ads, no data sharing, no profiling, no targeting
+
+The app works with any data matrix code, but the design features are aimed at
+minifigure codes.
+
 
 ---
 
