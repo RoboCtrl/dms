@@ -7,21 +7,31 @@ instructions (`~/.claude/CLAUDE.md`), which always apply.
 
 **DMS** — a pure client-side web app (no backend) for scanning Data Matrix
 codes with a phone camera, decoding them, and keeping a local history of scans.
-Target: Chrome and Firefox on mobile, portrait orientation. Supports dark and
-light themes.
+Installable as a PWA and usable offline. A local **catalog** maps tokens found
+in scanned content to a human-readable label and image, so entries show what a
+code actually is; catalog files can be imported from a URL. Target: Chrome and
+Firefox on mobile Android, portrait orientation. Supports dark and light themes.
 
 ## Tech constraints
 
 - Pure front-end only. No server, no build-time secrets, no remote storage.
+- No build step: vanilla ES modules, served as-is.
 - Must run from static files and work on mobile Chrome + Firefox.
-- All scan data is persisted locally on the device.
+- All scan data and catalog entries are persisted locally on the device
+  (IndexedDB); user settings live in localStorage.
+- The only network access at runtime is the optional catalog import fetch.
 
 ## Conventions
 
 - Code and comments in American English; conversation in British English.
 - Document functions in-code (purpose, args, types, return values).
 - Project docs live in `./docs` (markdown). Specs live in
-  `./docs/superpowers/specs/`.
+  `./docs/superpowers/specs/`, implementation plans in
+  `./docs/superpowers/plans/`.
+- `./README.md` is the user-facing manual; `./docs/README.md` is the developer
+  overview (module map, local dev, test checklist).
+- Tests live in `./test` and run with `npm test` (`node:test`, no framework).
+  Pure logic goes in `www/js/util/` so it stays unit-testable without a DOM.
 - Per-prompt change logs live in `./claude-log` (git-ignored).
 - Active developer branch: `dev-claude`.
 
@@ -83,9 +93,18 @@ Notes:
 - Because the symlink targets `www/` (web assets only), repo internals are no
   longer in the served tree. The `/etc/nginx/snippets/deny-sensitive.conf` rules
   remain as defense-in-depth, but keep web assets out of those denied patterns.
-- No build step — committed files are served as-is. After a PWA update, bump the
-  service worker cache version so clients refresh (`sw.js`).
+- No build step — committed files are served as-is. After changing any runtime
+  file, bump the cache version in `www/sw.js` (`const CACHE = "dms-vN"`) and add
+  any new file to its `ASSETS` list, otherwise clients keep the stale copy.
+- On Firefox for Android a plain reload is not enough to pick up a new service
+  worker — the browser has to be fully restarted.
+- `www/data/` is served over the web (nginx autoindex) and is the source the
+  in-app catalog import lists and fetches from
+  (`CATALOG_BASE_URL` in `www/js/catalog-import.js`).
 
 ## Status
 
-Pre-implementation. Spec and plan being drafted.
+Implemented and live. The scanner, history, grouping, freeze modes, options
+panel, Manage Database overlay, and catalog import are all in place; 114 unit
+tests pass via `npm test`. Work continues as incremental feature batches, each
+with a spec and plan under `./docs/superpowers/`.
