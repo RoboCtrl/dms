@@ -13,7 +13,14 @@ the tab is closed, which is considered intended behaviour.
 **Live app:** <https://srv346879.hstgr.cloud/app/>
 
 <img src="docs/Screenshot_main_screen.png" width="336" alt="Screenshot of the main screen">
-![Video of scanning minifigure packages](docs/example.mp4)
+
+### Scanning minifigure packages
+
+<video src="https://github.com/RoboCtrl/dms/raw/main/docs/example.mp4" width="336" controls muted playsinline poster="docs/Screenshot_main_screen.png">
+  Your browser does not display embedded video.
+</video>
+
+[▶ Watch the demo video](docs/example.mp4) (if the player above does not load)
 
 ## Motivation
 
