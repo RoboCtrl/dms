@@ -96,7 +96,7 @@ export function createHistoryPanel({
 
   /**
    * Build the "catalog is empty" note shown at the end of the entry list. The
-   * note explains that no token associations are known yet and offers an inline
+   * note explains that no catalog has been imported yet and offers an inline
    * button that jumps straight to the Database section of the options menu.
    * @returns {HTMLElement}
    */
@@ -111,7 +111,7 @@ export function createHistoryPanel({
     link.addEventListener("click", () => onOpenCatalogOptions());
 
     el.append(
-      document.createTextNode("Data Catalog is empty. Import known code associations via the "),
+      document.createTextNode("Data Catalog is empty. Import a Data Catalog via the "),
       link,
     );
     return el;
