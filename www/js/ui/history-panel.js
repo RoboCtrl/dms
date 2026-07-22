@@ -12,9 +12,17 @@ const LONG_PRESS_MS = 500;
  * @param {object} opts.catalog - The catalog model; supplies displayFor().
  * @param {() => boolean} opts.getHideDuplicates - Current hide-duplicates setting.
  * @param {() => string} opts.getGroupMode - Current grouping mode.
+ * @param {() => void} opts.onOpenCatalogOptions - Opens the options menu at the Database section.
  * @returns {{render: () => void}}
  */
-export function createHistoryPanel({ root, store, catalog, getHideDuplicates, getGroupMode }) {
+export function createHistoryPanel({
+  root,
+  store,
+  catalog,
+  getHideDuplicates,
+  getGroupMode,
+  onOpenCatalogOptions,
+}) {
   /**
    * Build a single entry row element for a record.
    * @param {{id:number, content:string, timestamp:number}} rec
@@ -87,6 +95,29 @@ export function createHistoryPanel({ root, store, catalog, getHideDuplicates, ge
   }
 
   /**
+   * Build the "catalog is empty" note shown at the end of the entry list. The
+   * note explains that no token associations are known yet and offers an inline
+   * button that jumps straight to the Database section of the options menu.
+   * @returns {HTMLElement}
+   */
+  function buildCatalogHint() {
+    const el = document.createElement("div");
+    el.className = "catalog-hint";
+
+    const link = document.createElement("button");
+    link.className = "link-btn";
+    link.type = "button";
+    link.textContent = "options menu";
+    link.addEventListener("click", () => onOpenCatalogOptions());
+
+    el.append(
+      document.createTextNode("Data Catalog is empty. Import known code associations via the "),
+      link,
+    );
+    return el;
+  }
+
+  /**
    * Attach a long-press handler (pointer held LONG_PRESS_MS without moving).
    * @param {HTMLElement} el - Element to watch.
    * @param {() => void} onLongPress - Invoked when the press threshold is met.
@@ -112,11 +143,17 @@ export function createHistoryPanel({ root, store, catalog, getHideDuplicates, ge
   }
 
   return {
-    /** Re-render the full list from current store state. */
+    /**
+     * Re-render the full list from current store state. Entries come first; an
+     * empty catalog appends the import hint after them.
+     */
     render() {
       root.replaceChildren();
       for (const rec of store.getVisible(getHideDuplicates(), getGroupMode())) {
         root.appendChild(buildEntry(rec));
+      }
+      if (catalog.getEntries().length === 0) {
+        root.appendChild(buildCatalogHint());
       }
     },
   };

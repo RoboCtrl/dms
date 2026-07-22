@@ -39,6 +39,8 @@ async function main() {
     catalog,
     getHideDuplicates: () => settings.get().hideDuplicates,
     getGroupMode: () => settings.get().groupMode,
+    // `options` is defined below; the callback only runs after bootstrap.
+    onOpenCatalogOptions: () => options.openAtDatabase(),
   });
   const bottomBar = createBottomBar({ store });
   const options = createOptionsMenu({

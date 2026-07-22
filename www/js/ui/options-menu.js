@@ -14,7 +14,7 @@ import * as db from "../db.js";
  * @param {object} opts.store - The store instance (Task 3).
  * @param {object} opts.settings - The settings instance (Task 4).
  * @param {() => void} opts.onSettingsChange - Called after any change so the app re-renders.
- * @returns {{open: () => void, refreshStats: () => Promise<void>}}
+ * @returns {{open: () => void, openAtDatabase: () => void, refreshStats: () => Promise<void>}}
  */
 export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const overlay = document.getElementById("options");
@@ -30,6 +30,7 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
   const discardAnim = document.getElementById("opt-discard-anim");
   const discardDuration = document.getElementById("opt-discard-duration");
   const groupRadios = overlay.querySelectorAll('input[name="group-mode"]');
+  const dbGroup = document.getElementById("opt-db-group");
   const listStats = document.getElementById("db-list-stats");
   const sizeStats = document.getElementById("db-size-stats");
 
@@ -62,6 +63,15 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
     }
     refreshStats();
     overlay.hidden = false;
+  }
+
+  /**
+   * Open the overlay and scroll the Database section to the top of the panel,
+   * so callers can point the user straight at the catalog import controls.
+   */
+  function openAtDatabase() {
+    open();
+    dbGroup.scrollIntoView({ block: "start" });
   }
 
   /** Close the overlay. */
@@ -134,5 +144,5 @@ export function createOptionsMenu({ store, settings, onSettingsChange }) {
     onSettingsChange();
   });
 
-  return { open, refreshStats };
+  return { open, openAtDatabase, refreshStats };
 }

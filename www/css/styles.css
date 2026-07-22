@@ -275,6 +275,28 @@ body {
   padding: 0 8px;
 }
 
+/* Note shown at the end of the entry list while the catalog holds no entries. */
+.catalog-hint {
+  margin: 12px 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--timestamp-fg);
+  border-radius: 8px;
+  background: var(--row);
+  color: var(--content-fg);
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+/* Inline button styled as a link, used inside .catalog-hint. */
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--link);
+  text-decoration: underline;
+}
+
 /* --- Bottom bar --- */
 #bottom-bar {
   flex: 0 0 auto;
@@ -357,6 +379,8 @@ body {
   border-top: 1px solid #80808044;
   margin-top: 12px;
   padding-top: 8px;
+  /* Keep the heading clear of the sticky options header when scrolled to. */
+  scroll-margin-top: 44px;
 }
 
 .opt-freeze {
