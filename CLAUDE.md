@@ -35,6 +35,16 @@ Firefox on mobile Android, portrait orientation. Supports dark and light themes.
 - Per-prompt change logs live in `./claude-log` (git-ignored).
 - Active developer branch: `dev-claude`.
 
+## Versioning
+
+The About section of the options panel (`www/index.html`, `.about-name`) shows
+`Data Matrix Scanner, Version: <tag>` and must always match the latest git tag.
+**Bump it in the same commit that is about to be tagged, before creating the
+tag** — otherwise the tagged tree carries a stale version and a second commit
+(and redeploy) is needed just to correct it. Tags are plain semver without a
+`v` prefix, e.g. `1.0.1`. Bumping the version is a runtime change, so also bump
+`CACHE` in `www/sw.js`.
+
 ## Deployment
 
 The app ships as static files. The entire runtime lives in the **`www/`**

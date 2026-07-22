@@ -227,3 +227,14 @@ The app is plain static files with no backend. Copy the `www/` folder to any web
 server that serves it over HTTPS and it will run as-is. Details are in
 [docs/deployment.md](docs/deployment.md); developer documentation is in
 [docs/README.md](docs/README.md).
+
+---
+
+## License
+
+DMS is released under the **MIT License** — see [LICENSE](LICENSE) for the full
+text. In short: you may use, copy, modify, and redistribute the app, including
+commercially, as long as the copyright notice and licence text travel with it.
+The software comes with no warranty.
+
+© 2026 RoboCtrl

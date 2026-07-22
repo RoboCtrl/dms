@@ -402,6 +402,14 @@ body {
   margin: 8px 0;
 }
 
+/* Checkbox row with the control on the left, matching the radio-row layout. */
+.opt-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
 /* Accent-colored suffix of the first token in unmatched history entries. */
 .tok-accent {
   color: var(--accent);

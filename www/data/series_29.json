@@ -13,7 +13,7 @@
   },
   "6603328": {
   "rn": 4,
-  "text": "MISSING: Monster Hunter"
+  "text": "Monster Hunter"
   },
   "6603324": {
   "rn": 5,
@@ -37,13 +37,160 @@
   },
   "6603329": {
   "rn": 9,
-  "text": "MISSING: Cute Witch"
+  "text": "Cute Witch"
   },
   "6603327": {
     "rn": 11,
     "text": "Ninja Warrior"
   },
   "6603326": {
+    "rn": 12,
+    "text": "Unicorn Elf"
+  },
+  
+  "6598415": {
+    "rn": 1,
+    "text": "Mech T-Rex"
+  },
+  "6598411": {
+  "rn": 2,
+  "text": "Diver & Fish"
+  },
+  "6598417": {
+  "rn": 3,
+  "text": "Bionicle Cosplayer"
+  },
+  "6598414": {
+  "rn": 4,
+  "text": "Monster Hunter"
+  },
+  "6598416": {
+  "rn": 5,
+  "text": "Chef & Dragon"
+  },
+  "6598421": {
+  "rn": 6,
+  "text": "Trash Monster"
+  },
+  "6598417": {
+  "rn": 7,
+  "text": "Boba Drink Costume"
+  },
+  "6598412": {
+  "rn": 8,
+  "text": "Tuba Player"
+  },
+  "6598410": {
+  "rn": 9,
+  "text": "Football Player"
+  },
+  "6598420": {
+  "rn": 9,
+  "text": "Cute Witch"
+  },
+  "6598419": {
+    "rn": 11,
+    "text": "Ninja Warrior"
+  },
+  "6598413": {
+    "rn": 12,
+    "text": "Unicorn Elf"
+  },
+  
+  "6605270": {
+    "rn": 1,
+    "text": "Mech T-Rex"
+  },
+  "6605260": {
+  "rn": 2,
+  "text": "Diver & Fish"
+  },
+  "6605264": {
+  "rn": 3,
+  "text": "Bionicle Cosplayer"
+  },
+  "6605265": {
+  "rn": 4,
+  "text": "Monster Hunter"
+  },
+  "6605262": {
+  "rn": 5,
+  "text": "Chef & Dragon"
+  },
+  "6605269": {
+  "rn": 6,
+  "text": "Trash Monster"
+  },
+  "6605263": {
+  "rn": 7,
+  "text": "Boba Drink Costume"
+  },
+  "6605261": {
+  "rn": 8,
+  "text": "Tuba Player"
+  },
+  "6605259": {
+  "rn": 9,
+  "text": "Football Player"
+  },
+  "6605268": {
+  "rn": 9,
+  "text": "Cute Witch"
+  },
+  "6605266": {
+    "rn": 11,
+    "text": "Ninja Warrior"
+  },
+  "6605267": {
+    "rn": 12,
+    "text": "Unicorn Elf"
+  },
+  
+  "6605257": {
+    "rn": 1,
+    "text": "Mech T-Rex"
+  },
+  "6605247": {
+  "rn": 2,
+  "text": "Diver & Fish"
+  },
+  "6605251": {
+  "rn": 3,
+  "text": "Bionicle Cosplayer"
+  },
+  "6605254": {
+  "rn": 4,
+  "text": "Monster Hunter"
+  },
+  "6605249": {
+  "rn": 5,
+  "text": "Chef & Dragon"
+  },
+  "6605256": {
+  "rn": 6,
+  "text": "Trash Monster"
+  },
+  "6605250": {
+  "rn": 7,
+  "text": "Boba Drink Costume"
+  },
+  "6605248": {
+  "rn": 8,
+  "text": "Tuba Player"
+  },
+  "6605246": {
+  "rn": 9,
+  "text": "Football Player"
+  },
+  "6605255": {
+  "rn": 9,
+  "text": "Cute Witch"
+  },
+  "6605253": {
+    "rn": 11,
+    "text": "Ninja Warrior"
+  },
+  "6605252": {
     "rn": 12,
     "text": "Unicorn Elf"
   }

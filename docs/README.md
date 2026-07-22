@@ -140,4 +140,9 @@ Older browsers may lack support for IndexedDB, ES modules, or the Camera API.
 
 ## License
 
-See the root LICENSE file or project documentation for licensing details.
+MIT — see the root [LICENSE](../LICENSE) file for the full text. Use, copying,
+modification, and redistribution (including commercial) are permitted provided
+the copyright notice and licence text are retained; the software is provided
+without warranty.
+
+© 2026 RoboCtrl
